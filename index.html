@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>한백 급여관리 시스템 v2.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0D1117;--s1:#161B22;--s2:#21262D;--s3:#30363D;--bd:#30363D;--bd2:#484F58;--tx:#E6EDF3;--mt:#8B949E;--hn:#484F58;
+  --tl:#39D353;--tl2:#2EA043;--bl:#58A6FF;--gd:#F0B429;--rd:#F85149;--pp:#A371F7;
+  --tl-bg:rgba(57,211,83,.08);--bl-bg:rgba(88,166,255,.08);--gd-bg:rgba(240,180,41,.08);--rd-bg:rgba(248,81,73,.08);--pp-bg:rgba(163,113,247,.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);font-size:13px;line-height:1.5;}
+.app{display:flex;height:100vh;overflow:hidden;}
+.sb{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
+.sb-logo{padding:16px 14px;border-bottom:1px solid var(--bd);font-size:13px;font-weight:700;}
+.sb-logo span{font-size:10px;color:var(--mt);display:block;font-weight:400;font-family:'DM Mono',monospace;margin-top:2px;}
+.sb-nav{flex:1;overflow-y:auto;padding:6px 0;}
+.sb-sec{padding:10px 14px 3px;font-size:9px;color:var(--hn);letter-spacing:.12em;font-weight:500;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--mt);font-size:12px;transition:.1s;}
+.ni:hover{background:var(--s2);color:var(--tx);}
+.ni.on{background:var(--bl-bg);color:var(--bl);border-right:2px solid var(--bl);}
+.sb-ft{padding:10px 14px;border-top:1px solid var(--bd);font-size:9px;color:var(--hn);font-family:'DM Mono',monospace;}
+.mn{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.tb{background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.tb-t{font-size:14px;font-weight:500;}
+.tb-m{font-size:11px;color:var(--mt);font-family:'DM Mono',monospace;}
+.ct{flex:1;padding:24px;overflow-y:auto;}
+.pg{display:none;}.pg.on{display:block;}
+.pt{font-size:17px;font-weight:700;margin-bottom:3px;}
+.ps{font-size:11px;color:var(--mt);margin-bottom:18px;}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;}
+.kc{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:12px;}
+.kl{font-size:9px;color:var(--mt);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.kv{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;line-height:1;}
+.kd{font-size:10px;margin-top:3px;}
+.cd{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-bottom:12px;}
+.cl{font-size:9px;color:var(--mt);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+table{width:100%;border-collapse:collapse;}
+th{padding:6px 10px;text-align:left;font-size:9px;color:var(--mt);letter-spacing:.06em;border-bottom:1px solid var(--bd);background:var(--s2);white-space:nowrap;}
+th.r,td.r{text-align:right;}th.c,td.c{text-align:center;}
+td{padding:6px 10px;border-bottom:1px solid var(--bd);font-size:12px;white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.mn-f{font-family:'DM Mono',monospace;font-size:11px;}
+.up{color:var(--tl);}.dn{color:var(--rd);}.wr{color:var(--gd);}.nu{color:var(--mt);}
+.bd{display:inline-flex;font-size:9px;padding:1px 7px;border-radius:100px;font-weight:500;}
+.b-i{background:var(--bl-bg);color:var(--bl);}.b-e{background:var(--gd-bg);color:var(--gd);}
+.b-h{background:var(--tl-bg);color:var(--tl);}.b-o{background:var(--pp-bg);color:var(--pp);}
+.b-ok{background:var(--tl-bg);color:var(--tl);}.b-w{background:var(--gd-bg);color:var(--gd);}
+.b-er{background:var(--rd-bg);color:var(--rd);}
+.ghd{background:rgba(255,255,255,.02);font-size:10px;color:var(--bl);letter-spacing:.08em;padding:5px 10px;}
+.gst td{background:rgba(88,166,255,.04);font-weight:600;border-top:1px solid var(--bd2);}
+.gtl td{background:rgba(57,211,83,.06);font-weight:700;border-top:2px solid rgba(57,211,83,.3);}
+select,input[type=text],input[type=password],textarea{background:var(--s2);border:1px solid var(--bd2);border-radius:5px;color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:6px 8px;outline:none;}
+select:focus,input:focus,textarea:focus{border-color:var(--bl);}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif;transition:.1s;}
+.btn-p{background:var(--bl);color:#fff;}.btn-p:hover{background:#4493E8;}
+.btn-s{background:var(--s2);color:var(--tx);border:1px solid var(--bd2);}.btn-s:hover{background:var(--s3);}
+.btn-t{background:var(--tl2);color:#fff;}.btn-t:hover{background:#2C9038;}
+.upl{border:2px dashed var(--bd2);border-radius:8px;padding:30px;text-align:center;cursor:pointer;transition:.15s;}
+.upl:hover,.upl.dg{border-color:var(--bl);background:var(--bl-bg);}
+.cw{position:relative;width:100%;}
+.noti{position:fixed;bottom:20px;right:20px;background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:10px 16px;font-size:12px;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.4);transform:translateY(70px);opacity:0;transition:.3s;max-width:340px;}
+.noti.sh{transform:translateY(0);opacity:1;}
+.noti.ok{border-left:3px solid var(--tl);}.noti.er{border-left:3px solid var(--rd);}.noti.in{border-left:3px solid var(--bl);}
+.pbox{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:12px;font-size:11px;font-family:'DM Mono',monospace;color:var(--tx);line-height:1.8;white-space:pre-wrap;max-height:300px;overflow-y:auto;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px;}
+.person-card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:10px;}
+.person-name{font-size:15px;font-weight:600;margin-bottom:4px;}
+.person-meta{font-size:11px;color:var(--mt);display:flex;gap:12px;flex-wrap:wrap;}
+.pay-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid rgba(255,255,255,.04);font-size:12px;}
+.pay-item:last-child{border-bottom:none;}
+.pay-item .pl{color:var(--mt);}.pay-item .pv{font-family:'DM Mono',monospace;}
+</style>
+</head>
+<body>
+<div id="lockScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0D1117;z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;width:320px;">
+    <div style="font-size:40px;margin-bottom:16px;">📊</div>
+    <div style="font-size:18px;font-weight:600;color:#E6EDF3;margin-bottom:4px;">한백 급여관리 시스템</div>
+    <div style="font-size:11px;color:#8B949E;margin-bottom:24px;">한백 계열사 · 10개 법인</div>
+    <input type="password" id="lockPw" placeholder="비밀번호 입력" 
+      style="width:100%;padding:12px 16px;background:#161B22;border:1px solid #30363D;border-radius:8px;color:#E6EDF3;font-size:14px;text-align:center;margin-bottom:12px;outline:none;"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <button onclick="unlock()" 
+      style="width:100%;padding:10px;background:#238636;border:none;border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-weight:500;">로그인</button>
+    <div id="lockErr" style="margin-top:12px;font-size:11px;color:#F85149;display:none;">비밀번호가 틀렸습니다.</div>
+    <div style="margin-top:24px;font-size:10px;color:#484F58;">v2.1 · 2026.05</div>
+  </div>
+</div>
+<div class="app">
+<aside class="sb">
+  <div class="sb-logo">📊 급여관리 시스템<span>한백 계열사 · 10개 법인</span><span id="lastUpdate" style="color:var(--tl);font-size:9px;margin-top:3px;"></span></div>
+  <nav class="sb-nav">
+    <div class="ni" data-pg="report">📝 급여 보고서</div>
+    <div class="sb-sec">현황</div>
+    <div class="ni on" data-pg="dash">📊 대시보드</div>
+    <div class="ni" data-pg="hist">📅 월별 이력</div>
+    <div class="ni" data-pg="move">↕ 인력변동 분석</div>
+    <div class="sb-sec">지급 분석</div>
+    <div class="ni" data-pg="labor">📈 내부인건비 통계</div>
+    <div class="ni" data-pg="overtime">⏱ 연장근로 통계</div>
+    <div class="sb-sec">공제 분석</div>
+    <div class="ni" data-pg="deduct">💰 공제항목 통계</div>
+    <div class="sb-sec">조회</div>
+    <div class="ni" data-pg="detail">🔍 급여 상세 조회</div>
+    <div class="ni" data-pg="person">👤 개인별 급여 조회</div>
+    <div class="sb-sec">검토</div>
+    <div class="ni" data-pg="chkFixed">⚠ 고정급 변동 검토</div>
+    <div class="ni" data-pg="chkPkg">⚠ 포괄임금 변동 검토</div>
+    <div class="ni" data-pg="chkTotal">⚠ 급여 총액 증감 검토</div>
+    <div class="ni" data-pg="chk4ins">⚠ 4대보험 증감 검토</div>
+    <div class="ni" data-pg="chk4chk">⚠ 4대보험 검토</div>
+    <div class="ni" data-pg="chkEtc">⚠ 기타공제 인원 검토</div>
+    <div class="ni" data-pg="chkDeduct">⚠ 급여공제 검토</div>
+    <div class="ni" data-pg="chkAdj">⚠ 급여 추가/차감 검토</div>
+    <div class="sb-sec">데이터</div>
+    <div class="ni" data-pg="upload">⬆ 데이터 업로드</div>
+    <div class="ni" data-pg="download">⬇ 데이터 다운로드</div>
+    <div class="ni" data-pg="compare">🔄 근로계약 비교</div>
+    <div class="sb-sec">자동화</div>
+    <div class="ni" data-pg="claude">🤖 Claude 연동</div>
+    <div class="ni" data-pg="proc">📋 작업 프로세스</div>
+  </nav>
+  <div class="sb-ft">v2.1 · 2026.05</div>
+</aside>
+<div class="mn">
+  <div class="tb"><div class="tb-t" id="tbTitle">대시보드</div><div class="tb-m" id="tbMeta"></div></div>
+  <div class="ct">
+
+    <!-- 대시보드 -->
+    <div class="pg on" id="pg-dash">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt">급여 현황 대시보드</div><div class="ps">월별 급여 주요 지표 및 법인별 현황</div></div>
+        <div style="display:flex;gap:6px;"><select id="dY" onchange="rDash()"></select><select id="dM" onchange="rDash()"></select></div>
+      </div>
+      <div class="kg" id="dKpi"></div>
+      <div class="g2">
+        <div class="cd"><div class="cl">법인별 지급금액</div><div class="cw" style="height:220px;"><canvas id="dCorpC"></canvas></div></div>
+        <div class="cd"><div class="cl">내부 / 외부 비중</div><div class="cw" style="height:220px;"><canvas id="dDonut"></canvas></div><div id="dLeg" style="margin-top:8px;font-size:11px;"></div></div>
+      </div>
+      <div class="cd"><div class="cl">법인별 상세현황</div><div style="overflow-x:auto;"><table><thead><tr><th>법인</th><th>구분</th><th class="c">인원 (내/외)</th><th class="r">지급금액</th><th class="r">비중</th></tr></thead><tbody id="dCorpT"></tbody></table></div></div>
+    </div>
+
+
+    <!-- 급여 보고서 -->
+    <div class="pg" id="pg-report">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="rpTitle">급여 보고서</div><div class="ps">데이터 기반 자동 생성 보고서 · 인사이트 포함</div></div>
+        <div style="display:flex;gap:6px;"><select id="rpY" onchange="rReport()"></select><select id="rpM" onchange="rReport()"></select>
+          <button class="btn btn-p" onclick="printReport()" style="font-size:11px;">🖨 인쇄</button>
+        </div>
+      </div>
+      <div id="rpContent" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- 월별 이력 -->
+    <div class="pg" id="pg-hist">
+      <div class="pt">월별 이력 · 현황</div><div class="ps">2025~2026년 전체 월별 급여 현황</div>
+      <div class="cd"><div class="cl">월별 지급금액 추이</div><div class="cw" style="height:200px;"><canvas id="hTrend"></canvas></div></div>
+      <div class="cd"><div class="cl">월별 급여 이력</div><div style="overflow-x:auto;"><table><thead><tr><th>연월</th><th class="c">전체</th><th class="c">내부</th><th class="c">외부</th><th class="r">지급금액</th><th class="r">내부지급</th><th class="r">외부지급</th><th class="r">실수령액</th><th class="r">전월比</th></tr></thead><tbody id="hBody"></tbody></table></div></div>
+    </div>
+
+    <!-- 인력변동 -->
+    <div class="pg" id="pg-move">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt">전월 대비 인력변동 분석</div><div class="ps">신규입사 · 실제퇴사 · 법인이동 3분류</div></div>
+        <div style="display:flex;gap:6px;"><select id="mY" onchange="rMove()"></select><select id="mM" onchange="rMove()"></select></div>
+      </div>
+      <div class="kg" id="mKpi" style="grid-template-columns:repeat(5,1fr);"></div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div class="cd"><div class="cl" style="color:var(--tl);">▲ 신규입사</div><table><thead><tr><th>성명</th><th>법인</th><th>구분</th><th class="r">지급금액</th><th>비고</th></tr></thead><tbody id="mJoin"></tbody></table></div>
+        <div class="cd" style="border-color:rgba(248,81,73,.2);"><div class="cl" style="color:var(--rd);">▼ 퇴사 (당월 미존재)</div><table><thead><tr><th>성명</th><th>법인</th><th>구분</th><th class="r">전월지급</th><th>비고</th></tr></thead><tbody id="mLeave"></tbody></table></div>
+      </div>
+      <div class="cd"><div class="cl" style="color:var(--pp);">⇄ 법인이동 (소속변경 감지)</div><table><thead><tr><th>성명</th><th>이전</th><th>현재</th><th>유형</th><th class="r">전월</th><th class="r">당월</th><th class="r">변동</th></tr></thead><tbody id="mTrans"></tbody></table></div>
+      <div class="cd"><div class="cl">법인별 인원 증감</div><table><thead><tr><th>법인</th><th class="c">전월</th><th class="c">당월</th><th class="c">증감</th><th class="r">지급변동</th></tr></thead><tbody id="mCorp"></tbody></table></div>
+    </div>
+
+    <!-- 급여증감 TOP20 -->
+    
+
+    <!-- 내부인건비 통계 -->
+    <div class="pg" id="pg-labor">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt">내부인원 인건비 통계</div><div class="ps">직접근로계약 내부 인원 기준</div></div>
+        <div style="display:flex;gap:6px;"><select id="lY" onchange="rLabor()"></select><select id="lM" onchange="rLabor()"></select></div>
+      </div>
+      <div class="kg" id="lKpi" style="grid-template-columns:repeat(5,1fr);"></div>
+      <div class="g2">
+        <div class="cd"><div class="cl">임금형태별 분포</div><div class="cw" style="height:180px;"><canvas id="lTypeC"></canvas></div><table><thead><tr><th>형태</th><th class="c">인원</th><th class="r">지급합</th><th class="r">1인평균</th></tr></thead><tbody id="lTypeT"></tbody></table></div>
+        <div class="cd"><div class="cl">법인별 내부 인건비</div><div class="cw" style="height:180px;"><canvas id="lCorpC"></canvas></div><table><thead><tr><th>법인</th><th class="c">인원</th><th class="r">지급합</th><th class="r">1인평균</th></tr></thead><tbody id="lCorpT"></tbody></table></div>
+      </div>
+
+      <div class="g2" style="margin-top:12px;margin-bottom:12px;">
+        <div class="cd"><div class="cl">2025년 내부 인건비 월별 추이</div><div class="cw" style="height:200px;"><canvas id="lTs25C"></canvas></div><div id="lTs25Info" style="font-size:11px;color:var(--mt);margin-top:6px;"></div></div>
+        <div class="cd"><div class="cl">2026년 내부 인건비 월별 추이 (누적 평균)</div><div class="cw" style="height:200px;"><canvas id="lTs26C"></canvas></div><div id="lTs26Info" style="font-size:11px;color:var(--mt);margin-top:6px;"></div></div>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">연도별 월별 내부 인건비 상세</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#lTsBody')?.closest('table'),'내부인건비_시계열')" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;"><table><thead><tr><th>연월</th><th class="c">내부인원</th><th class="r">내부지급합</th><th class="r">1인평균</th><th class="r">전월比</th><th class="r">누적평균</th></tr></thead><tbody id="lTsBody"></tbody></table></div>
+      </div>
+
+      <div class="cd" style="margin-top:12px;">
+        <div class="cl">목적세부별 내부 인건비 분석</div>
+        <div class="g2">
+          <div class="cw" style="height:220px;"><canvas id="lDeptC"></canvas></div>
+          <div style="overflow-x:auto;max-height:260px;overflow-y:auto;">
+            <table><thead><tr><th>목적세부</th><th class="c">인원</th><th class="r">지급합</th><th class="r">1인평균</th><th class="r">비중</th></tr></thead>
+            <tbody id="lDeptT"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 고정급 변동 검토 -->
+    <div class="pg" id="pg-chkFixed">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="cfTitle">고정급 변동 검토</div><div class="ps">기본급 + 고정초과 + 고정출장 + 고정휴일 — 전월 대비 변경 인원</div></div>
+        <div style="display:flex;gap:6px;"><select id="cfY" onchange="rChkFixed()"></select><select id="cfM" onchange="rChkFixed()"></select></div>
+      </div>
+      <div class="kg" id="cfKpi" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="position:relative;">
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#cfBody')?.closest('table'),'고정급변동_'+E('cfM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>임금형태</th><th>구분</th><th class="r">전월 고정급</th><th class="r">당월 고정급</th><th class="r">변동액</th><th>기본급</th><th>고정초과</th><th>고정출장</th><th>고정휴일</th><th>추정 원인</th></tr></thead>
+        <tbody id="cfBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- 포괄임금 변동 검토 -->
+    <div class="pg" id="pg-chkPkg">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="cpkTitle">포괄임금 변동 검토</div><div class="ps">임금형태 '포괄임금' 인원 — 전월 대비 기본급(포괄 포함) 변경</div></div>
+        <div style="display:flex;gap:6px;"><select id="cpkY" onchange="rChkPkg()"></select><select id="cpkM" onchange="rChkPkg()"></select></div>
+      </div>
+      <div class="kg" id="cpkKpi" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="position:relative;">
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#cpkBody')?.closest('table'),'포괄임금변동_'+E('cpkM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월 기본급</th><th class="r">당월 기본급</th><th class="r">변동액</th><th class="r">전월 고정급합</th><th class="r">당월 고정급합</th><th class="r">고정급 변동</th><th>추정 원인</th></tr></thead>
+        <tbody id="cpkBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- 급여 총액 증감 검토 -->
+    <div class="pg" id="pg-chkTotal">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="ctTitle">급여 총액 증감 검토</div><div class="ps">전월 대비 지급금액 변동 — 증가/감소 분리 · 사유 분석</div></div>
+        <div style="display:flex;gap:6px;"><select id="ctY" onchange="rChkTotal()"></select><select id="ctM" onchange="rChkTotal()"></select></div>
+      </div>
+      <div class="kg" id="ctKpi" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;"></div>
+      <div class="g2">
+        <div class="cd" style="position:relative;">
+          <div class="cl" style="color:var(--tl);">▲ 증가 인원 (금액 큰 순)</div>
+          <button class="btn btn-s" onclick="dlTable2(document.querySelector('#ctUpBody')?.closest('table'),'총액증가_'+E('ctM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+          <div style="overflow-x:auto;max-height:500px;overflow-y:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>임금형태</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">증가액</th><th class="r">증가률</th><th>증감 사유</th></tr></thead>
+          <tbody id="ctUpBody"></tbody></table></div>
+        </div>
+        <div class="cd" style="position:relative;border-color:rgba(248,81,73,.2);">
+          <div class="cl" style="color:var(--rd);">▼ 감소 인원 (금액 큰 순)</div>
+          <button class="btn btn-s" onclick="dlTable2(document.querySelector('#ctDnBody')?.closest('table'),'총액감소_'+E('ctM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+          <div style="overflow-x:auto;max-height:500px;overflow-y:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>임금형태</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">감소액</th><th class="r">감소률</th><th>증감 사유</th></tr></thead>
+          <tbody id="ctDnBody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 4대보험 증감 검토 -->
+    <div class="pg" id="pg-chk4ins">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="c4Title">4대보험 증감 검토</div><div class="ps">국민연금 · 건강보험 · 장기요양 · 고용보험 — 전월 대비 변동 인원 (변동 없는 인원 미표시)</div></div>
+        <div style="display:flex;gap:6px;"><select id="c4Y" onchange="rChk4ins()"></select><select id="c4M" onchange="rChk4ins()"></select></div>
+      </div>
+      <div class="kg" id="c4Kpi" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">국민연금 변동</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4NpBody')?.closest('table'),'국민연금변동_'+E('c4M')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">변동액</th><th>추정 원인</th></tr></thead><tbody id="c4NpBody"></tbody></table>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">건강보험 변동</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4HiBody')?.closest('table'),'건강보험변동_'+E('c4M')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">변동액</th><th>추정 원인</th></tr></thead><tbody id="c4HiBody"></tbody></table>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">장기요양 변동</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4LyBody')?.closest('table'),'장기요양변동_'+E('c4M')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">변동액</th><th>추정 원인</th></tr></thead><tbody id="c4LyBody"></tbody></table>
+      </div>
+      <div class="cd" style="position:relative;">
+        <div class="cl">고용보험 변동</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4EmBody')?.closest('table'),'고용보험변동_'+E('c4M')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월</th><th class="r">당월</th><th class="r">변동액</th><th>추정 원인</th></tr></thead><tbody id="c4EmBody"></tbody></table>
+      </div>
+    </div>
+
+
+    <!-- 4대보험 검토 -->
+    <div class="pg" id="pg-chk4chk">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="c4cTitle">4대보험 검토</div><div class="ps">신규입사 · 퇴사 · 소속변경 인원 — 4대보험 취득/상실 확인</div></div>
+        <div style="display:flex;gap:6px;"><select id="c4cY" onchange="rChk4chk()"></select><select id="c4cM" onchange="rChk4chk()"></select></div>
+      </div>
+      <div class="kg" id="c4cKpi" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl" style="color:var(--tl);">신규입사 — 4대보험 취득 대상 (전원)</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4cJoinBody')?.closest('table'),'4대보험_신규입사_'+E('c4cM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">국민연금</th><th class="r">건강보험</th><th class="r">장기요양</th><th class="r">고용보험</th><th class="r">지급금액</th><th>상태</th></tr></thead>
+        <tbody id="c4cJoinBody"></tbody></table>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl" style="color:var(--rd);">퇴사 — 4대보험 상실 대상 (전원)</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4cLeaveBody')?.closest('table'),'4대보험_퇴사_'+E('c4cM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월 국민연금</th><th class="r">전월 건강보험</th><th class="r">전월 장기요양</th><th class="r">전월 고용보험</th><th class="r">전월 지급</th><th>상태</th></tr></thead>
+        <tbody id="c4cLeaveBody"></tbody></table>
+      </div>
+      <div class="cd" style="position:relative;">
+        <div class="cl" style="color:var(--pp);">소속변경 (법인이동) — 4대보험 취득/상실 확인 (전원)</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#c4cMoveBody')?.closest('table'),'4대보험_소속변경_'+E('c4cM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>#</th><th>성명</th><th>이전법인</th><th>현재법인</th><th>구분</th><th class="r">전월 4대보험</th><th class="r">당월 4대보험</th><th class="r">변동</th><th>확인사항</th></tr></thead>
+        <tbody id="c4cMoveBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- 기타공제 인원 검토 -->
+    <div class="pg" id="pg-chkEtc">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="ceTitle">기타공제 인원 검토</div><div class="ps">4대보험 · 소득세 외 공제 — 항목별 해당 인원 전원 리스트 (변동 없는 인원 미표시)</div></div>
+        <div style="display:flex;gap:6px;"><select id="ceY" onchange="rChkEtc()"></select><select id="ceM" onchange="rChkEtc()"></select></div>
+      </div>
+      <div class="kg" id="ceKpi" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;"></div>
+      <div id="ceCards"></div>
+    </div>
+
+
+    <!-- 급여공제 검토 -->
+    <div class="pg" id="pg-chkDeduct">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="cdTitle">급여공제 검토</div><div class="ps">중도 입퇴사 시 급여 정산 금액 검토</div></div>
+        <div style="display:flex;gap:6px;"><select id="cdY" onchange="rChkDeduct()"></select><select id="cdM" onchange="rChkDeduct()"></select></div>
+      </div>
+      <div style="background:var(--s2);border-left:3px solid var(--bl);border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--mt);line-height:1.8;">
+        <strong style="color:var(--tx);">급여공제란?</strong><br>
+        중도 입사 또는 퇴사 시 근무일수에 따라 급여를 일할 정산하는 금액입니다.<br>
+        월 중간 입사자는 미근무 기간만큼 공제, 월 중간 퇴사자는 잔여 기간만큼 공제됩니다.<br>
+        이 항목에 금액이 있다면 해당 월에 입퇴사 또는 휴직 복직 등 근무일수 변동이 있었음을 의미합니다.
+      </div>
+      <div class="kg" id="cdKpi" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="position:relative;">
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#cdBody')?.closest('table'),'급여공제_'+E('cdM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th>임금형태</th><th class="r">기본급</th><th class="r">급여공제</th><th class="r">공제비율</th><th class="r">지급금액</th><th>추정 사유</th></tr></thead>
+        <tbody id="cdBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- 급여 추가/차감 검토 -->
+    <div class="pg" id="pg-chkAdj">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="caTitle">급여 추가/차감 검토</div><div class="ps">수당 과소지급 보정 및 사유별 급여 가감 내역</div></div>
+        <div style="display:flex;gap:6px;"><select id="caY" onchange="rChkAdj()"></select><select id="caM" onchange="rChkAdj()"></select></div>
+      </div>
+      <div style="background:var(--s2);border-left:3px solid var(--gd);border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--mt);line-height:1.8;">
+        <strong style="color:var(--tx);">급여 추가/차감이란?</strong><br>
+        전월 이전 수당 과소·과다 지급분을 당월에 보정하거나,<br>
+        특별한 사정(징계감봉, 무단결근, 특별수당 추가 등)에 따라 급여를 추가 또는 감소시킬 때 사용하는 항목입니다.<br>
+        양수(+)는 추가 지급, 음수(-)는 차감을 의미합니다.
+      </div>
+      <div class="kg" id="caKpi" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;"></div>
+      <div class="g2">
+        <div class="cd" style="position:relative;">
+          <div class="cl" style="color:var(--tl);">추가 지급 인원 (+)</div>
+          <button class="btn btn-s" onclick="dlTable2(document.querySelector('#caUpBody')?.closest('table'),'급여추가_'+E('caM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+          <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">추가금액</th><th class="r">지급금액</th></tr></thead>
+          <tbody id="caUpBody"></tbody></table>
+        </div>
+        <div class="cd" style="position:relative;border-color:rgba(248,81,73,.2);">
+          <div class="cl" style="color:var(--rd);">차감 인원 (-)</div>
+          <button class="btn btn-s" onclick="dlTable2(document.querySelector('#caDnBody')?.closest('table'),'급여차감_'+E('caM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+          <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">차감금액</th><th class="r">지급금액</th></tr></thead>
+          <tbody id="caDnBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 연장근로 통계 -->
+    <div class="pg" id="pg-overtime">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="otTitle">연장근로 통계</div><div class="ps">월별 연장근로 시간 및 수당 · 연간 누적 현황</div></div>
+        <div style="display:flex;gap:6px;"><select id="otY" onchange="rOvertime()"></select><select id="otM" onchange="rOvertime()"></select></div>
+      </div>
+      <div class="kg" id="otKpi" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;"></div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">당월 연장근로 현황 (시간 · 수당)</div><button class="btn btn-s" onclick="dlOtMonth()" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;max-height:400px;overflow-y:auto;"><table><thead><tr><th>성명</th><th>법인</th><th>구분</th><th class="r">(평)연장</th><th class="r">(평)야간</th><th class="r">(휴)근무</th><th class="r">(휴)연장</th><th class="r">(휴)야간</th><th class="r">합계시간</th><th class="r">연장수당합</th></tr></thead>
+        <tbody id="otMonthBody"></tbody></table></div>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl" style="color:var(--bl);">연간 누적 연장근로 TOP (내림차순)</div><button class="btn btn-s" onclick="dlOtYear()" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div class="ps" style="margin-bottom:10px;">당해년도 전 기간 연장근로시간 누적 합산 · 내림차순 정렬</div>
+        <div style="overflow-x:auto;max-height:400px;overflow-y:auto;"><table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">(평)연장</th><th class="r">(평)야간</th><th class="r">(휴)근무</th><th class="r">(휴)연장</th><th class="r">(휴)야간</th><th class="r">연간합계</th><th class="r">연간수당</th><th class="r">월평균</th></tr></thead>
+        <tbody id="otYearBody"></tbody></table></div>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl" style="color:var(--tl);">출장 · 돌발 현황 (별도)</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#otTripBody')?.closest('table'),'출장돌발_'+E('otM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;max-height:300px;overflow-y:auto;"><table><thead><tr><th>성명</th><th>법인</th><th>구분</th><th class="r">출장(건)</th><th class="r">출장수당</th><th class="r">돌발(건)</th><th class="r">돌발수당</th><th class="r">합계수당</th></tr></thead>
+        <tbody id="otTripBody"></tbody></table></div>
+      </div>
+      <div class="g2">
+        <div class="cd"><div class="cl">월별 연장근로시간 추이</div><div class="cw" style="height:200px;"><canvas id="otTrendC"></canvas></div></div>
+        <div class="cd"><div class="cl">유형별 비중</div><div class="cw" style="height:200px;"><canvas id="otTypeC"></canvas></div></div>
+      </div>
+    </div>
+
+    
+    <!-- 공제항목 통계 -->
+    <div class="pg" id="pg-deduct">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt" id="ddTitle">공제항목 통계</div><div class="ps">4대보험 · 소득세 · 기타공제 분석</div></div>
+        <div style="display:flex;gap:6px;"><select id="ddY" onchange="rDeduct()"></select><select id="ddM" onchange="rDeduct()"></select></div>
+      </div>
+      <div class="kg" id="ddKpi" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;"></div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div class="cd"><div class="cl">공제 항목별 합계</div><div class="cw" style="height:200px;"><canvas id="ddBarC"></canvas></div></div>
+        <div class="cd"><div class="cl">공제 비중</div><div class="cw" style="height:200px;"><canvas id="ddPieC"></canvas></div></div>
+      </div>
+      <div class="cd" style="margin-bottom:12px;position:relative;">
+        <div class="cl">개인별 공제 상세</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#ddBody')?.closest('table'),'공제상세_'+E('ddM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <div style="overflow-x:auto;max-height:400px;overflow-y:auto;"><table><thead><tr><th>성명</th><th>법인</th><th>구분</th><th class="r">지급금액</th><th class="r">국민연금</th><th class="r">건강보험</th><th class="r">장기요양</th><th class="r">고용보험</th><th class="r">소득세</th><th class="r">지방소득세</th><th class="r">공제합계</th><th class="r">실수령액</th><th class="r">공제율</th></tr></thead>
+        <tbody id="ddBody"></tbody></table></div>
+      </div>
+      <div class="cd" style="position:relative;">
+        <div class="cl">법인별 공제 현황</div>
+        <button class="btn btn-s" onclick="dlTable2(document.querySelector('#ddCorpBody')?.closest('table'),'공제_법인별_'+E('ddM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">⬇ Excel</button>
+        <table><thead><tr><th>법인</th><th class="c">인원</th><th class="r">지급합계</th><th class="r">공제합계</th><th class="r">실수령합계</th><th class="r">평균공제율</th></tr></thead>
+        <tbody id="ddCorpBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- 급여 상세 조회 -->
+    <div class="pg" id="pg-detail">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="pt">월별 급여 상세내역</div><div class="ps">선택한 월의 전 직원 급여 상세 73개 항목 조회</div></div>
+        <div style="display:flex;gap:6px;"><select id="dtY" onchange="rDetail()"></select><select id="dtM" onchange="rDetail()"></select>
+          <input type="text" id="dtSearch" placeholder="성명 검색..." oninput="rDetail()" style="width:120px;">
+          <select id="dtFilter" onchange="rDetail()"><option value="">전체</option><option value="내부">내부</option><option value="외부">외부</option></select>
+          <select id="dtCorp" onchange="rDetail()"><option value="">전체법인</option></select>
+        </div>
+      </div>
+      <div class="cd" style="margin-top:12px;"><div style="overflow-x:auto;max-height:500px;overflow-y:auto;"><table id="dtTable"><thead><tr id="dtHead"></tr></thead><tbody id="dtBody"></tbody></table></div></div>
+      <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;color:var(--hn);" id="dtInfo"></span><button class="btn btn-s" onclick="dlTable('dtTable','급여상세_'+E('dtM').value)" style="font-size:10px;">⬇ Excel</button></div>
+    </div>
+
+    <!-- 개인별 급여 조회 -->
+    <div class="pg" id="pg-person">
+      <div class="pt">개인별 급여 조회</div><div class="ps">기간 및 인원 선택 → 해당 기간의 급여 내역 조회</div>
+      <div class="cd">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+          <span style="font-size:11px;color:var(--mt);flex-shrink:0;">기간</span>
+          <select id="psFrom"></select><span style="color:var(--mt);">~</span><select id="psTo"></select>
+          <span style="font-size:11px;color:var(--mt);flex-shrink:0;margin-left:8px;">성명</span>
+          <input type="text" id="psName" placeholder="이름 입력..." style="width:140px;" list="psNameList" onkeydown="if(event.key==='Enter')rPerson()">
+          <datalist id="psNameList"></datalist>
+          <button class="btn btn-p" onclick="rPerson()">조회</button>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:8px;" id="psDlWrap"><button class="btn btn-s" onclick="dlPersonData()" style="font-size:10px;">⬇ 조회결과 Excel</button></div><div id="psResult"></div>
+      </div>
+    </div>
+
+    <!-- 데이터 업로드 -->
+    <div class="pg" id="pg-upload">
+      <div class="pt">데이터 업로드 · 관리</div><div class="ps">xlsx 파일 업로드 → RAW_DATA 추가 → 새 HTML 파일 다운로드</div>
+      <div class="g2">
+        <div>
+          <div class="cd">
+            <div class="cl">급여 확정 파일 업로드</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+              <span style="font-size:11px;color:var(--mt);flex-shrink:0;">대상 월</span>
+              <select id="uplYear" style="width:90px;"></select>
+              <select id="uplMonth" style="width:70px;">
+                <option value="1">1월</option><option value="2">2월</option><option value="3">3월</option>
+                <option value="4">4월</option><option value="5">5월</option><option value="6">6월</option>
+                <option value="7">7월</option><option value="8">8월</option><option value="9">9월</option>
+                <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+              </select>
+              <span id="uplExist" style="font-size:10px;"></span>
+            </div>
+            <div class="upl" id="uplZone" onclick="document.getElementById('uplFile').click()" ondragover="event.preventDefault();this.classList.add('dg')" ondragleave="this.classList.remove('dg')" ondrop="handleDrop(event)">
+              <div style="font-size:12px;color:var(--mt);margin-bottom:4px;">클릭하거나 드래그</div>
+              <div style="font-size:10px;color:var(--hn);">xlsx · Sheet1 (행0=헤더)</div>
+            </div>
+            <input type="file" id="uplFile" accept=".xlsx" style="display:none" onchange="handleUpload(this.files[0])">
+            <div id="uplPreview" style="display:none;margin-top:10px;">
+              <div id="uplInfo" style="background:var(--s2);border-radius:6px;padding:10px;font-size:12px;"></div>
+              <div id="uplWarn" style="display:none;background:var(--gd-bg);border:1px solid rgba(240,180,41,.3);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:11px;color:var(--gd);"></div>
+              <div style="display:flex;gap:6px;margin-top:8px;">
+                <button class="btn btn-t" onclick="confirmUpload()">✓ RAW_DATA에 추가</button>
+                <button class="btn btn-s" onclick="downloadNewHtml()">⬇ 새 HTML 다운로드</button>
+                <button class="btn btn-s" onclick="cancelUpload()">취소</button>
+              </div>
+            </div>
+          </div>
+          <div class="cd">
+            <div class="cl">현재 데이터 현황</div>
+            <div id="uplStatus"></div>
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+
+    <!-- 데이터 다운로드 -->
+    <div class="pg" id="pg-download">
+      <div class="pt">데이터 다운로드</div><div class="ps">RAW_DATA 기간별 다운로드 · Excel / CSV / HTML</div>
+      <div class="g2">
+        <div class="cd">
+          <div class="cl">다운로드 기간 설정</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+            <span style="font-size:11px;color:var(--mt);flex-shrink:0;">시작</span>
+            <select id="dlFrom" style="flex:1;"></select>
+            <span style="font-size:11px;color:var(--mt);">~</span>
+            <span style="font-size:11px;color:var(--mt);flex-shrink:0;">종료</span>
+            <select id="dlTo" style="flex:1;"></select>
+          </div>
+          <div id="dlPreview" style="background:var(--s2);border-radius:6px;padding:10px;font-size:12px;margin-bottom:12px;"></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-p" style="width:100%;" onclick="downloadRawExcel()">⬇ Excel 다운로드 (.xlsx)</button>
+            <button class="btn btn-s" style="width:100%;" onclick="downloadRawCsv()">⬇ CSV 다운로드 (.csv)</button>
+            <button class="btn btn-s" style="width:100%;" onclick="downloadNewHtml()">⬇ HTML 다운로드 (앱+데이터 포함)</button>
+          </div>
+        </div>
+        <div class="cd">
+          <div class="cl">저장된 데이터 현황</div>
+          <div id="dlStatus"></div>
+          <div style="margin-top:10px;font-size:10px;color:var(--hn);" id="dlInfo"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 근로계약 비교 -->
+    <div class="pg" id="pg-compare">
+      <div class="pt">근로계약 파일 비교 검증</div><div class="ps">기본급 기준 파일과 당월 급여 비교</div>
+      <div class="g2">
+        <div class="cd">
+          <div class="cl">근로계약 기준 파일 업로드</div>
+          <div class="upl" style="padding:20px;" onclick="document.getElementById('refFile').click()">
+            <div style="font-size:12px;color:var(--mt);">근로계약 파일 선택 (xlsx)</div>
+          </div>
+          <input type="file" id="refFile" accept=".xlsx" style="display:none" onchange="handleRef(this.files[0])">
+          <div style="margin-top:8px;display:flex;gap:6px;"><select id="cmpMon"></select><button class="btn btn-p" onclick="runCompare()">비교</button></div>
+        </div>
+        <div class="cd"><div class="cl">비교 결과</div><div id="cmpResult" style="color:var(--hn);font-size:12px;">파일 업로드 후 비교 실행</div></div>
+      </div>
+      <div class="cd" id="cmpTable" style="display:none;"><div class="cl">상세 결과</div><div style="overflow-x:auto;"><table><thead><tr><th>성명</th><th>법인</th><th class="r">기준 기본급</th><th class="r">실제 기본급</th><th class="r">차이</th><th>상태</th></tr></thead><tbody id="cmpBody"></tbody></table></div></div>
+    </div>
+
+    <!-- Claude 연동 -->
+    <div class="pg" id="pg-claude">
+      <div class="pt">Claude 연동</div><div class="ps">프롬프트 자동 생성 · API 직접 호출</div>
+      <div class="g2">
+        <div class="cd">
+          <div class="cl">작업 프롬프트 생성</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;"><select id="cpMon" onchange="genPrompt()"></select><input type="text" id="cpVer" value="v1.0" style="width:80px;" oninput="genPrompt()"></div>
+          <textarea id="cpSpec" style="width:100%;height:60px;resize:vertical;" placeholder="특이사항..." oninput="genPrompt()"></textarea>
+          <div class="pbox" id="cpBox" style="margin-top:8px;">월을 선택하면 프롬프트 생성</div>
+          <button class="btn btn-s" style="margin-top:8px;width:100%;" onclick="navigator.clipboard.writeText(E('cpBox').textContent);noti('복사됨','ok')">📋 복사</button>
+        </div>
+        <div class="cd">
+          <div class="cl">Claude API 분석</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <input type="password" id="apiKey" placeholder="API Key (sk-ant-...)" style="flex:1;">
+            <button class="btn btn-s" onclick="testApi()">테스트</button>
+          </div>
+          <select id="apiType" style="width:100%;margin-bottom:8px;">
+            <option value="summary">당월 요약 분석</option><option value="trend">전년 비교 분석</option><option value="corp">법인별 이상 탐지</option><option value="check">점검사항 생성</option>
+          </select>
+          <button class="btn btn-p" style="width:100%;" onclick="callApi()">🤖 분석 실행</button>
+          <div id="apiOut" style="margin-top:8px;background:var(--s2);border-radius:6px;padding:10px;font-size:11px;color:var(--mt);min-height:80px;max-height:200px;overflow-y:auto;white-space:pre-wrap;">API Key 입력 후 실행</div>
+        </div>
+      </div>
+        <div class="cd">
+          <div class="cl">Google Sheets 연동</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <input type="text" id="gasUrl" placeholder="Apps Script 웹앱 URL (/macros/s/.../exec)" style="flex:1;font-size:10px;">
+            <button class="btn btn-t" onclick="gasConnect()">연결</button>
+          </div>
+          <div id="gasStatus" style="margin-bottom:10px;font-size:10px;color:var(--hn);"></div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button class="btn btn-s" style="width:100%;font-size:11px;" onclick="gasInit()">① 시트 초기화 (최초 1회)</button>
+            <button class="btn btn-p" style="width:100%;font-size:11px;" onclick="gasPushAll()">② 전체 데이터 업로드 → Sheets</button>
+            <button class="btn btn-p" style="width:100%;font-size:11px;" onclick="gasPullAll()">③ Sheets에서 데이터 불러오기 → 앱</button>
+            <button class="btn btn-s" style="width:100%;font-size:11px;" onclick="gasSync()">④ 월별요약만 동기화</button>
+          </div>
+          <div id="gasLog" style="margin-top:10px;font-size:10px;color:var(--mt);max-height:150px;overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <!-- 작업 프로세스 -->
+    <div class="pg" id="pg-proc">
+      <div class="pt">작업 프로세스 · 가이드</div><div class="ps">매월 급여 확정 후 표준 절차</div>
+      <div class="g2">
+        <div class="cd">
+          <div class="cl">5단계 프로세스</div>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="procSteps"></div>
+        </div>
+        <div class="cd">
+          <div class="cl">월별 체크리스트</div>
+          <div id="procCL"></div>
+          <button class="btn btn-s" style="margin-top:8px;width:100%;" onclick="resetCL()">초기화</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<div class="noti" id="noti"></div>
+
+
+<script>
+const PW_HASH='a14378e58af8c3865bc72e8283f4b9721bfac4809051459bb2d397e868911195';
+async function hashPw(pw){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function unlock(){
+  const pw=document.getElementById('lockPw').value;
+  const h=await hashPw(pw);
+  if(h===PW_HASH){
+    document.getElementById('lockScreen').style.display='none';
+    sessionStorage.setItem('hb_auth','1');
+  }else{
+    document.getElementById('lockErr').style.display='block';
+    document.getElementById('lockPw').value='';
+    document.getElementById('lockPw').focus();
+  }
+}
+// 세션 유지 (같은 탭에서 새로고침 시 재로그인 불필요)
+if(sessionStorage.getItem('hb_auth')==='1'){
+  document.getElementById('lockScreen').style.display='none';
+}else{
+  document.getElementById('lockPw').focus();
+}
+</script>
+
+<script>
+// Google Sheets 연동 URL (연결 시 자동 내장)
+const GAS_URL='';
+
+const HEADER=["연도", "월", "성명", "입사일", "퇴사일", "부양가족", "청년공제", "대표이사", "소속법인", "기능조직", "목적조직", "목적세부", "PJT/직무", "근로상태", "임금형태", "급여지급", "내부/외부", "(평)연장", "(평)연장야간", "(평)야간", "(휴)근무", "(휴)연장", "(휴)연장야간", "(휴)야간", "총 출장", "총 돌발", "기본급", "고정수당(통합)", "고정초과근무", "고정출장", "그외현장근로", "고정휴일수당", "(평)연장수당", "(평)연장야간수당", "(평)야간수당", "(휴)근무수당", "(휴)연장수당", "(휴)연장야간수당", "(휴)야간수당", "출장수당", "접속수당", "돌발수당", "해외수당", "직무수당", "성과급", "연차 보상", "급여공제", "급여차감/추가", "근속축하금", "식대", "자가운전", "지급금액", "비과세", "국민연금", "건강보험", "건강보험정산", "장기요양", "장기요양정산", "고용보험", "소득세", "지방소득세", "차용·가불", "내일채움공제", "상 조 회", "학자금상환액", "기타공제", "사택관리비", "건보퇴직정산", "연말정산", "기부금", "공 제 액", "실수령액", "비용부담"];
+const I={yr:0,mo:1,nm:2,rs:4,co:8,tp:14,gj:15,ie:16,bs:26,ot:28,hl:31,eo:32,hw:35,tr:39,sr:41,ov:42,aj:47,py:51,nt:71,bu:72};
+const DETAIL={}
+const AGG={}
+const HB=new Set(["한백","한백이엔씨","우원","한비","한백통신","무소속"]);
+
+const E=id=>document.getElementById(id);
+function SE(id,html2){const el=E(id);if(el)el.innerHTML=html2;}
+const M=n=>(n/1e6).toFixed(1)+'M';
+const K=n=>Math.round(n/1000).toLocaleString()+'K';
+const C=n=>Math.round(n).toLocaleString();
+const PCT=(a,b)=>b?((a-b)/b*100).toFixed(1)+'%':'—';
+Chart.defaults.color='#8B949E';
+Chart.defaults.font={family:"'Noto Sans KR',sans-serif",size:10};
+let CH={};
+
+function noti(msg,type){const el=E('noti');el.textContent=msg;el.className='noti sh '+type;setTimeout(()=>el.classList.remove('sh'),3000);}
+// ════ 테이블 엑셀 다운로드 공용 ════
+function dlTable(tableId, fileName){
+  const tbl=document.getElementById(tableId);
+  if(!tbl){noti('테이블 없음','er');return;}
+  try{
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.table_to_sheet(tbl);
+    XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
+    XLSX.writeFile(wb,fileName+'.xlsx');
+    noti(fileName+'.xlsx 다운로드 완료','ok');
+  }catch(e){noti('오류: '+e.message,'er');}
+}
+
+function dlArrayToExcel(headers, rows, fileName){
+  try{
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+    XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
+    XLSX.writeFile(wb,fileName+'.xlsx');
+    noti(fileName+'.xlsx 다운로드 완료','ok');
+  }catch(e){noti('오류: '+e.message,'er');}
+}
+
+function sKeys(){return Object.keys(DETAIL).sort();}
+function lKey(){return sKeys().slice(-1)[0];}
+
+// 분리행 합산
+function agg(rows){
+  const m={};
+  if(!rows) return m;
+  rows.forEach(r=>{
+    const raw=String(r[I.nm]||'');
+    const bn=raw.replace(/[\d#]+$/,'');
+    if(!bn) return;
+    if(!m[bn]) m[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),tp:String(r[I.tp]||''),rs:r[I.rs]||'',
+      py:0,bs:0,ot:0,hl:0,eo:0,hw:0,tr:0,sr:0,ov:0,aj:0};
+    const p=m[bn], n=v=>parseFloat(v)||0;
+    p.py+=n(r[I.py]);p.bs+=n(r[I.bs]);p.ot+=n(r[I.ot]);p.hl+=n(r[I.hl]);
+    p.eo+=n(r[I.eo]);p.hw+=n(r[I.hw]);p.tr+=n(r[I.tr]);p.sr+=n(r[I.sr]);
+    p.ov+=n(r[I.ov]);p.aj+=n(r[I.aj]);
+  });
+  return m;
+}
+
+function reason(c,p){
+  if(!p) return '신규';
+  const ds=[{l:'기본급',d:c.bs-p.bs},{l:'고정초과',d:c.ot-p.ot},{l:'고정휴일',d:c.hl-p.hl},
+    {l:'(평)연장',d:c.eo-p.eo},{l:'(휴)근무',d:c.hw-p.hw},{l:'출장',d:c.tr-p.tr},
+    {l:'돌발',d:c.sr-p.sr},{l:'해외',d:c.ov-p.ov},{l:'차감추가',d:c.aj-p.aj}]
+    .filter(x=>Math.abs(x.d)>5000).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,2);
+  return ds.length?ds.map(x=>`${x.l}${x.d>0?'+':''}${Math.round(x.d/1000)}K`).join(', '):'소폭변동';
+}
+
+// 셀렉트 초기화
+const _selInited=new Set();
+function initSel(yId,mId,cb,isDash){
+  const yS=E(yId),mS=E(mId);
+  if(!yS||!mS) return;
+  const selKey=yId+'/'+mId;
+  const alreadyInited=_selInited.has(selKey);
+
+  // 연도 옵션 항상 갱신 (업로드로 새 연도 추가 가능)
+  const ys=[...new Set(sKeys().map(k=>k.split('-')[0]))].sort().reverse();
+  const prevY=yS.value;
+  const prevM=mS.value;
+  yS.innerHTML=ys.map(y=>'<option>'+y+'년</option>').join('');
+
+  // 이전 선택값 복원
+  if(prevY && yS.querySelector('option[value="'+prevY+'"]')){
+    yS.value=prevY;
+  } else if(G_KEY){
+    const gyr=G_KEY.split('-')[0];
+    yS.value=gyr+'년';
+  }
+
+  // 월 옵션 갱신
+  const yr=yS.value.replace('년','');
+  refreshMonthSel(mId,yr);
+
+  // 월 선택값 복원
+  if(prevM && mS.querySelector('option[value="'+prevM+'"]')){
+    mS.value=prevM;
+  } else if(G_KEY && mS.querySelector('option[value="'+G_KEY+'"]')){
+    mS.value=G_KEY;
+  }
+
+  // onchange는 최초 1회만 설정
+  if(!alreadyInited){
+    _selInited.add(selKey);
+    yS.addEventListener('change',function(){
+      const yr2=yS.value.replace('년','');
+      refreshMonthSel(mId,yr2);
+      // 같은 월 유지 시도
+      const curM2=mS.value;
+      if(!curM2||!mS.querySelector('option[value="'+curM2+'"]')){
+        const opts2=mS.options;
+        if(opts2.length) mS.value=opts2[opts2.length-1].value;
+      }
+      if(isDash){const mk=mS.value;if(mk)setGKey(mk);}
+      if(cb)cb();
+    });
+    mS.addEventListener('change',function(){
+      if(isDash){const mk=mS.value;if(mk)setGKey(mk);}
+      if(cb)cb();
+    });
+  }
+}
+
+// 글로벌 연도·월 상태
+let G_KEY = '';
+
+function setGKey(key){
+  G_KEY = key;
+  // 모든 셀렉트 동기화
+  const yr = key.split('-')[0];
+  const selPairs = [['dY','dM'],['mY','mM'],['rY','rM'],['lY','lM'],['dtY','dtM']];
+  selPairs.forEach(([yId,mId])=>{
+    const yS=E(yId), mS=E(mId);
+    if(!yS||!mS) return;
+    if(yS.value !== yr+'년') yS.value = yr+'년';
+    // 월 옵션 재구성
+    refreshMonthSel(mId, yr);
+    if(mS.querySelector('option[value="'+key+'"]')) mS.value = key;
+  });
+  E('tbMeta').textContent = key + (AGG[key] ? ' · '+AGG[key].total_n+'명 · '+M(AGG[key].pay) : '');
+}
+
+function refreshMonthSel(mId, yr){
+  const mS=E(mId); if(!mS) return;
+  const cur=mS.value;
+  const ms=sKeys().filter(k=>k.startsWith(yr));
+  mS.innerHTML=ms.map(k=>'<option value="'+k+'">'+k.split('-')[1]+'월</option>').join('');
+  if(ms.indexOf(cur)>=0) mS.value=cur;
+  else if(ms.length) mS.value=ms[ms.length-1];
+}
+
+function getYM(key){
+  if(!key) return '';
+  const d=AGG[key];
+  return d ? d.yr+'년 '+d.mo+'월' : key;
+}
+
+// 탭 전환
+const TITLES={dash:'대시보드',report:'급여 보고서',hist:'월별 이력',move:'인력변동 분석',
+  labor:'내부인건비 통계',chkFixed:'고정급 변동 검토',chkPkg:'포괄임금 변동 검토',chkTotal:'급여 총액 증감 검토',chk4ins:'4대보험 증감 검토',chk4chk:'4대보험 검토',chkEtc:'기타공제 인원 검토',chkDeduct:'급여공제 검토',chkAdj:'급여 추가/차감 검토',deduct:'공제항목 통계',overtime:'연장근로 통계',detail:'급여 상세 조회',person:'개인별 급여 조회',
+  upload:'데이터 업로드',download:'데이터 다운로드',compare:'근로계약 비교',claude:'Claude 연동',proc:'작업 프로세스'};
+const RENDERS={dash:rDash,report:rReport,hist:rHist,move:rMove,labor:rLabor,chkFixed:rChkFixed,chkPkg:rChkPkg,chkTotal:rChkTotal,chk4ins:rChk4ins,chk4chk:rChk4chk,chkEtc:rChkEtc,chkDeduct:rChkDeduct,chkAdj:rChkAdj,deduct:rDeduct,overtime:rOvertime,detail:rDetail,
+  person:rPersonInit,upload:rUpload,download:rDownload,compare:rCompare,claude:rClaude,proc:rProc};
+
+document.querySelectorAll('.ni').forEach(el=>{
+  el.onclick=()=>{
+    document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+    document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+    el.classList.add('on');
+    const pg=el.dataset.pg;
+    E('pg-'+pg).classList.add('on');
+    E('tbTitle').textContent=TITLES[pg]||pg;
+    try{RENDERS[pg]&&RENDERS[pg]();}catch(e){console.warn(e);}
+  };
+});
+
+// ════ 대시보드 ════
+function rDash(){
+  const k=E('dM')?.value; if(!k) return;
+  const d=AGG[k]; if(!d) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1], p=pk?AGG[pk]:null;
+  const yk=`${d.yr-1}-${String(d.mo).padStart(2,'0')}`, y=AGG[yk];
+  E('tbTitle').textContent='대시보드 — '+getYM(k);
+  E('dKpi').innerHTML=[
+    {l:'지급금액',v:M(d.pay),s:p?`전월比 ${M(d.pay-p.pay)}`:'—',c:1},
+    {l:'인원',v:d.total_n+'명',s:`내부${d.int_n}/외부${d.ext_n}`,c:1},
+    {l:'전년동월',v:y?M(d.pay-y.pay):'—',s:y?`${y.yr}.${String(y.mo).padStart(2,'0')}: ${M(y.pay)}`:'—',c:y&&d.pay>y.pay?1:0},
+    {l:'내부 지급',v:M(d.int_pay),s:`1인평균 ${M(d.int_pay/d.int_n)}`,c:1},
+  ].map(k=>`<div class="kc"><div class="kl">${k.l}</div><div class="kv ${k.c?'up':''}">${k.v}</div><div class="kd ${k.c?'up':'nu'}">${k.s}</div></div>`).join('');
+
+  // 법인테이블 (한백계열/외 구분+소계+총합계)
+  const co=Object.entries(d.corps).sort((a,b)=>b[1].pay-a[1].pay);
+  const hb=co.filter(([,c])=>c.hb), ot=co.filter(([,c])=>!c.hb);
+  const tot=co.reduce((s,[,c])=>s+c.pay,0);
+  const subRow=(label,list,bg)=>{const sn=list.reduce((s,[,c])=>s+c.n,0),si=list.reduce((s,[,c])=>s+c.int_n,0),
+    se=list.reduce((s,[,c])=>s+c.ext_n,0),sp=list.reduce((s,[,c])=>s+c.pay,0);
+    return `<tr class="gst"><td colspan="2" style="background:${bg}">${label} 소계</td><td class="c" style="background:${bg}">${sn} (내${si}/외${se})</td><td class="r mn-f" style="background:${bg}">${K(sp)}</td><td class="r" style="background:${bg}">${(sp/tot*100).toFixed(1)}%</td></tr>`;};
+  const cRow=([n,c])=>`<tr><td><strong>${n}</strong></td><td><span class="bd ${c.hb?'b-h':'b-o'}">${c.hb?'한백계열':'한백계열외'}</span></td><td class="c">${c.n} <span style="color:var(--mt);font-size:10px;">내${c.int_n}/외${c.ext_n}</span></td><td class="r mn-f">${K(c.pay)}</td><td class="r">${(c.pay/tot*100).toFixed(1)}%</td></tr>`;
+  E('dCorpT').innerHTML=
+    `<tr class="ghd"><td colspan="5">▶ 한백계열 (비용 직접부담)</td></tr>`+hb.map(cRow).join('')+subRow('한백계열',hb,'rgba(57,211,83,.05)')+
+    `<tr class="ghd"><td colspan="5">▶ 한백계열외 (비용 미부담)</td></tr>`+ot.map(cRow).join('')+subRow('한백계열외',ot,'rgba(163,113,247,.05)')+
+    `<tr class="gtl"><td colspan="2" style="color:var(--tl)">총 합계</td><td class="c">${d.total_n} (내${d.int_n}/외${d.ext_n})</td><td class="r mn-f">${K(tot)}</td><td class="r">100%</td></tr>`;
+
+  // 차트
+  if(CH.dc) CH.dc.destroy();
+  CH.dc=new Chart(E('dCorpC'),{type:'bar',data:{labels:co.map(c=>c[0]),datasets:[
+    {label:'지급',data:co.map(([,c])=>c.pay),backgroundColor:co.map(([,c])=>c.hb?'rgba(57,211,83,.5)':'rgba(163,113,247,.5)'),borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}}}}});
+  if(CH.dd) CH.dd.destroy();
+  CH.dd=new Chart(E('dDonut'),{type:'doughnut',data:{labels:['내부','외부'],datasets:[{data:[d.int_pay,d.ext_pay],backgroundColor:['rgba(88,166,255,.8)','rgba(240,180,41,.8)'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}});
+  E('dLeg').innerHTML=`<span style="color:var(--bl)">■ 내부 ${(d.int_pay/d.pay*100).toFixed(1)}%</span> <span style="color:var(--gd)">■ 외부 ${(d.ext_pay/d.pay*100).toFixed(1)}%</span>`;
+}
+
+// ════ 월별이력 ════
+function rHist(){
+  const ks=sKeys();
+  if(CH.ht) CH.ht.destroy();
+  CH.ht=new Chart(E('hTrend'),{type:'bar',data:{labels:ks.map(k=>k.replace('-','.')),datasets:[
+    {label:'내부',data:ks.map(k=>AGG[k].int_pay),backgroundColor:'rgba(88,166,255,.5)',stack:'a',borderRadius:2},
+    {label:'외부',data:ks.map(k=>AGG[k].ext_pay),backgroundColor:'rgba(240,180,41,.5)',stack:'a',borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{font:{size:8}}},y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}}}}});
+  const yrs=[...new Set(ks.map(k=>AGG[k].yr))].sort((a,b)=>b-a);
+  let h='';
+  yrs.forEach(yr=>{
+    const yks=ks.filter(k=>AGG[k].yr===yr).sort((a,b)=>b.localeCompare(a));
+    h+=`<tr class="ghd"><td colspan="9">▶ ${yr}년</td></tr>`;
+    yks.forEach(k=>{const d=AGG[k],pk=ks[ks.indexOf(k)-1],p=pk?AGG[pk]:null,df=p?d.pay-p.pay:0;
+      h+=`<tr><td class="mn-f">${k}</td><td class="c">${d.total_n}</td><td class="c up">${d.int_n}</td><td class="c wr">${d.ext_n}</td><td class="r mn-f">${M(d.pay)}</td><td class="r mn-f up">${M(d.int_pay)}</td><td class="r mn-f wr">${M(d.ext_pay)}</td><td class="r mn-f">${M(d.net)}</td><td class="r ${df>0?'up':'dn'}">${p?M(df):'—'}</td></tr>`;});
+    const yd=yks.map(k=>AGG[k]),yp=yd.reduce((s,d)=>s+d.pay,0);
+    h+=`<tr class="gst"><td class="mn-f" style="color:var(--bl)">${yr}년 소계</td><td class="c" style="color:var(--mt)">평균${Math.round(yd.reduce((s,d)=>s+d.total_n,0)/yd.length)}명</td><td colspan="2"></td><td class="r mn-f">${M(yp)}</td><td class="r mn-f up">${M(yd.reduce((s,d)=>s+d.int_pay,0))}</td><td class="r mn-f wr">${M(yd.reduce((s,d)=>s+d.ext_pay,0))}</td><td class="r mn-f">${M(yd.reduce((s,d)=>s+d.net,0))}</td><td></td></tr>`;
+  });
+  E('hBody').innerHTML=h;
+}
+
+// ════ 인력변동 ════
+function rMove(){
+  initSel('mY','mM',rMove);
+  const k=E('mM')?.value; if(!k) return;
+  const ks=sKeys(),pk=ks[ks.indexOf(k)-1];
+  const d=AGG[k],p=pk?AGG[pk]:null;
+  const cr=DETAIL[k],pr=pk?DETAIL[pk]:null;
+  const cm=agg(cr),pm=pr?agg(pr):{};
+  const cN=new Set(Object.keys(cm)),pN=new Set(Object.keys(pm));
+  const dn=d.total_n-(p?p.total_n:0),di=d.int_n-(p?p.int_n:0),de=d.ext_n-(p?p.ext_n:0),dp=d.pay-(p?p.pay:0);
+  E('tbTitle').textContent='인력변동 분석 — '+getYM(k);
+  E('mKpi').innerHTML=[
+    {l:'전월',v:(p?p.total_n:'—')+'명',s:pk||'—'},{l:'당월',v:d.total_n+'명',s:`내부${d.int_n}/외부${d.ext_n}`,c:'up'},
+    {l:'순증감',v:(dn>0?'+':'')+dn+'명',s:`내부${di>0?'+':''}${di}/외부${de>0?'+':''}${de}`,c:dn>0?'up':dn<0?'dn':'nu'},
+    {l:'지급변동',v:(dp>0?'+':'')+M(dp),s:M(d.pay),c:dp>0?'up':'dn'},
+    {l:'1인평균',v:M(d.pay/d.total_n),s:p?`전월 ${M(p.pay/p.total_n)}`:'—'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div><div class="kd ${x.c||'nu'}">${x.s}</div></div>`).join('');
+
+  // 신규입사
+  const joined=[...cN].filter(n=>!pN.has(n));
+  E('mJoin').innerHTML=joined.length?joined.sort((a,b)=>cm[b].py-cm[a].py).map(n=>{const c=cm[n];
+    return `<tr><td><strong>${c.nm}</strong></td><td>${c.co}</td><td><span class="bd ${c.ie==='내부'?'b-i':'b-e'}">${c.ie}</span></td><td class="r mn-f up">${C(Math.round(c.py))}</td><td style="font-size:10px;color:var(--mt)">${c.tp}</td></tr>`;}).join(''):
+    '<tr><td colspan="5" style="text-align:center;color:var(--hn);padding:12px;">없음</td></tr>';
+
+  // 퇴사
+  const left=[...pN].filter(n=>!cN.has(n));
+  E('mLeave').innerHTML=left.length?left.sort((a,b)=>pm[b].py-pm[a].py).map(n=>{const c=pm[n];
+    return `<tr><td><strong>${c.nm}</strong></td><td>${c.co}</td><td><span class="bd ${c.ie==='내부'?'b-i':'b-e'}">${c.ie}</span></td><td class="r mn-f dn">${C(Math.round(c.py))}</td><td style="font-size:10px;color:var(--mt)">${c.rs?String(c.rs).slice(0,10):'—'}</td></tr>`;}).join(''):
+    '<tr><td colspan="5" style="text-align:center;color:var(--hn);padding:12px;">없음</td></tr>';
+
+  // 법인이동
+  const moved=[...cN].filter(n=>pN.has(n)&&cm[n].co!==pm[n].co);
+  E('mTrans').innerHTML=moved.length?moved.map(n=>{const c=cm[n],pp=pm[n],df=c.py-pp.py;
+    return `<tr><td><strong>${c.nm}</strong></td><td>${pp.co}</td><td style="color:var(--tl)"><strong>${c.co}</strong></td><td><span class="bd b-w">법인이동</span></td><td class="r mn-f">${C(Math.round(pp.py))}</td><td class="r mn-f">${C(Math.round(c.py))}</td><td class="r mn-f ${df>0?'up':'dn'}">${df>0?'+':''}${C(Math.round(df))}</td></tr>`;}).join(''):
+    '<tr><td colspan="7" style="text-align:center;color:var(--hn);padding:12px;">없음</td></tr>';
+
+  // 법인별 증감
+  const ac=new Set([...Object.keys(d.corps||{}),...(p?Object.keys(p.corps||{}):[])]);
+  E('mCorp').innerHTML=[...ac].sort((a,b)=>((d.corps[b]||{}).pay||0)-((d.corps[a]||{}).pay||0)).map(c=>{
+    const cn=(d.corps[c]||{}).n||0,pn=p?(p.corps[c]||{}).n||0:0,cp=(d.corps[c]||{}).pay||0,pp2=p?(p.corps[c]||{}).pay||0:0,dn2=cn-pn,dp2=cp-pp2;
+    return `<tr><td>${c}</td><td class="c mn-f">${pn||'—'}</td><td class="c mn-f">${cn}</td><td class="c ${dn2>0?'up':dn2<0?'dn':'nu'}" style="font-weight:${dn2?600:400}">${dn2>0?'+':''}${dn2}</td><td class="r mn-f ${dp2>0?'up':'dn'}">${p?M(dp2):'—'}</td></tr>`;}).join('');
+}
+
+
+// ════ 내부인건비 ════
+function rLabor(){
+  initSel('lY','lM',rLabor);
+  const k=E('lM')?.value; if(!k) return;
+  const d=AGG[k],rows=DETAIL[k]; if(!rows) return;
+  const ir=rows.filter(r=>String(r[I.ie]||'')==='내부');
+  const ks=sKeys(),pk=ks[ks.indexOf(k)-1],p=pk?AGG[pk]:null;
+  const ip=d.int_pay,in2=d.int_n,ia=in2?ip/in2:0;
+  E('tbTitle').textContent='내부인건비 통계 — '+getYM(k);
+  E('lKpi').innerHTML=[
+    {l:'내부인원',v:in2+'명',s:`전체 ${d.total_n}명 중 ${(in2/d.total_n*100).toFixed(0)}%`},
+    {l:'내부지급합계',v:M(ip),s:`1인평균 ${M(ia)}`},
+    {l:'기본급합계',v:M(d.base),s:`비중 ${(d.base/ip*100).toFixed(0)}%`},
+    {l:'전월比',v:p?M(ip-p.int_pay):'—',s:p?`전월 ${M(p.int_pay)}`:'—'},
+    {l:'전년동월',v:(()=>{const yk=`${d.yr-1}-${String(d.mo).padStart(2,'0')}`;return AGG[yk]?M(ip-AGG[yk].int_pay):'—';})(),s:''},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv">${x.v}</div><div class="kd nu">${x.s}</div></div>`).join('');
+
+  const tm={};
+  ir.forEach(r=>{const t=String(r[I.tp]||'기타')||'기타';if(!tm[t])tm[t]={n:0,py:0};tm[t].n++;tm[t].py+=parseFloat(r[I.py])||0;});
+  const tl=Object.entries(tm).sort((a,b)=>b[1].n-a[1].n);
+  const tc=['rgba(88,166,255,.8)','rgba(57,211,83,.8)','rgba(240,180,41,.8)','rgba(163,113,247,.8)','rgba(248,81,73,.8)'];
+  if(CH.lt) CH.lt.destroy();
+  CH.lt=new Chart(E('lTypeC'),{type:'doughnut',data:{labels:tl.map(([t])=>t),datasets:[{data:tl.map(([,v])=>v.n),backgroundColor:tc,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false}}}});
+  E('lTypeT').innerHTML=tl.map(([t,v])=>`<tr><td>${t}</td><td class="c">${v.n}</td><td class="r mn-f">${K(v.py)}</td><td class="r mn-f">${M(v.py/v.n)}</td></tr>`).join('');
+
+  const cm2={};
+  ir.forEach(r=>{const c=String(r[I.co]||'');if(!c)return;if(!cm2[c])cm2[c]={n:0,py:0,bs:0};cm2[c].n++;cm2[c].py+=parseFloat(r[I.py])||0;cm2[c].bs+=parseFloat(r[I.bs])||0;});
+  const cl2=Object.entries(cm2).sort((a,b)=>b[1].py-a[1].py);
+  if(CH.lc) CH.lc.destroy();
+  CH.lc=new Chart(E('lCorpC'),{type:'bar',data:{labels:cl2.map(([c])=>c),datasets:[
+    {label:'기본급',data:cl2.map(([,v])=>v.bs),backgroundColor:'rgba(88,166,255,.5)',stack:'a',borderRadius:2},
+    {label:'기타',data:cl2.map(([,v])=>v.py-v.bs),backgroundColor:'rgba(57,211,83,.4)',stack:'a',borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9}}}},
+      scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{font:{size:8}}},y:{stacked:true,grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}}}}});
+  E('lCorpT').innerHTML=cl2.map(([c,v])=>`<tr><td>${c}</td><td class="c">${v.n}</td><td class="r mn-f">${K(v.py)}</td><td class="r mn-f">${M(v.py/v.n)}</td></tr>`).join('');
+
+  // ═══ 시계열 분석 ═══
+  const allKs=sKeys();
+  const ks25=allKs.filter(x=>x.startsWith('2025'));
+  const ks26=allKs.filter(x=>x.startsWith('2026'));
+
+  function tsData(keys){
+    return keys.map(ky=>{
+      const ad=AGG[ky];
+      return ad?{k:ky,mo:ky.split('-')[1]+'월',n:ad.int_n,pay:ad.int_pay,avg:ad.int_n?ad.int_pay/ad.int_n:0}:null;
+    }).filter(Boolean);
+  }
+  const ts25=tsData(ks25), ts26=tsData(ks26);
+
+  // 2025 차트
+  if(CH.lTs25) CH.lTs25.destroy();
+  if(ts25.length){
+    const avg25=ts25.reduce((s,t)=>s+t.pay,0)/ts25.length;
+    CH.lTs25=new Chart(E('lTs25C'),{type:'bar',data:{
+      labels:ts25.map(t=>t.mo),
+      datasets:[
+        {label:'내부지급',data:ts25.map(t=>t.pay),backgroundColor:'rgba(88,166,255,.5)',borderRadius:3},
+        {label:'평균',data:ts25.map(()=>avg25),type:'line',borderColor:'rgba(248,81,73,.7)',borderWidth:1.5,borderDash:[4,4],pointRadius:0,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9}}}},
+        scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}}}}
+    });
+    const avg25N=Math.round(ts25.reduce((s,t)=>s+t.n,0)/ts25.length);
+    E('lTs25Info').textContent='2025년 평균: '+M(avg25)+' ('+avg25N+'명) · '+ts25.length+'개월';
+  }
+
+  // 2026 차트 (누적평균 포함)
+  if(CH.lTs26) CH.lTs26.destroy();
+  if(ts26.length){
+    const cumAvg=[];let cumSum=0;
+    ts26.forEach((t,i)=>{cumSum+=t.pay;cumAvg.push(cumSum/(i+1));});
+    CH.lTs26=new Chart(E('lTs26C'),{type:'bar',data:{
+      labels:ts26.map(t=>t.mo),
+      datasets:[
+        {label:'내부지급',data:ts26.map(t=>t.pay),backgroundColor:'rgba(57,211,83,.5)',borderRadius:3},
+        {label:'누적평균',data:cumAvg,type:'line',borderColor:'rgba(240,180,41,.8)',borderWidth:2,pointRadius:3,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9}}}},
+        scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}}}}
+    });
+    const avg26=ts26.reduce((s,t)=>s+t.pay,0)/ts26.length;
+    E('lTs26Info').textContent='2026년 누적평균: '+M(avg26)+' · '+ts26.length+'개월 경과';
+  }
+
+  // 시계열 테이블
+  const allTs=[...tsData(ks25),...tsData(ks26)];
+  let cumSum2=0,cumN2=0;
+  const tsRows=allTs.map((t,i)=>{
+    const prev2=i>0?allTs[i-1]:null;
+    const diff=prev2?t.pay-prev2.pay:0;
+    cumSum2+=t.pay;cumN2++;
+    const cumAvg2=cumSum2/cumN2;
+    return `<tr><td class="mn-f">${t.k}</td><td class="c">${t.n}명</td><td class="r mn-f">${M(t.pay)}</td><td class="r mn-f">${M(t.avg)}</td><td class="r mn-f ${diff>0?'up':diff<0?'dn':''}">${prev2?(diff>0?'+':'')+M(diff):'—'}</td><td class="r mn-f">${M(cumAvg2)}</td></tr>`;
+  });
+  // 연도별 그룹
+  let tsHtml='';
+  ['2025','2026'].forEach(yr=>{
+    const yrTs=allTs.filter(t=>t.k.startsWith(yr));
+    if(!yrTs.length) return;
+    tsHtml+=`<tr class="ghd"><td colspan="6">\u25b6 ${yr}년 (${yrTs.length}개월)</td></tr>`;
+    let yrCum=0;
+    yrTs.forEach((t,i)=>{
+      const prev2=i>0?yrTs[i-1]:null;
+      const diff=prev2?t.pay-prev2.pay:0;
+      yrCum+=t.pay;
+      tsHtml+=`<tr><td class="mn-f">${t.k}</td><td class="c">${t.n}명</td><td class="r mn-f">${M(t.pay)}</td><td class="r mn-f">${M(t.avg)}</td><td class="r mn-f ${diff>0?'up':diff<0?'dn':''}">${prev2?(diff>0?'+':'')+M(diff):'—'}</td><td class="r mn-f">${M(yrCum/( i+1))}</td></tr>`;
+    });
+    const yrAvg=yrTs.reduce((s,t)=>s+t.pay,0)/yrTs.length;
+    tsHtml+=`<tr class="gst"><td class="mn-f" style="color:var(--bl)">${yr}년 평균</td><td class="c">${Math.round(yrTs.reduce((s,t)=>s+t.n,0)/yrTs.length)}명</td><td class="r mn-f">${M(yrAvg)}</td><td class="r mn-f">${M(yrTs.reduce((s,t)=>s+t.avg,0)/yrTs.length)}</td><td colspan="2"></td></tr>`;
+  });
+  E('lTsBody').innerHTML=tsHtml;
+
+  // 목적세부별 분석
+  const dm={};
+  ir.forEach(r=>{
+    const dept=String(r[11]||'미분류').trim()||'미분류';
+    if(!dm[dept])dm[dept]={n:0,py:0};
+    dm[dept].n++;dm[dept].py+=parseFloat(r[I.py])||0;
+  });
+  const dl=Object.entries(dm).sort((a,b)=>b[1].py-a[1].py);
+  const totalIntPay=ir.reduce((s,r)=>s+(parseFloat(r[I.py])||0),0);
+  const deptColors=['rgba(88,166,255,.7)','rgba(57,211,83,.7)','rgba(240,180,41,.7)','rgba(163,113,247,.7)','rgba(248,81,73,.7)','rgba(78,205,196,.7)','rgba(150,206,180,.7)','rgba(255,107,107,.6)','rgba(69,183,209,.7)','rgba(221,160,221,.7)','rgba(152,216,200,.7)','rgba(255,234,167,.7)'];
+  if(CH.ld) CH.ld.destroy();
+  CH.ld=new Chart(E('lDeptC'),{type:'bar',data:{labels:dl.slice(0,12).map(([d])=>d),datasets:[
+    {label:'지급금액',data:dl.slice(0,12).map(([,v])=>v.py),backgroundColor:deptColors,borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>Math.round(v/1e6)+'M'}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
+  E('lDeptT').innerHTML=dl.map(([dept,v])=>`<tr><td>${dept}</td><td class="c">${v.n}</td><td class="r mn-f">${K(v.py)}</td><td class="r mn-f">${M(v.py/v.n)}</td><td class="r">${(v.py/totalIntPay*100).toFixed(1)}%</td></tr>`).join('');
+}
+
+// ════ 급여 상세 조회 ════
+function rDetail(){
+  initSel('dtY','dtM',rDetail);
+  const k=E('dtM')?.value; if(!k) return;
+  const rows=DETAIL[k]; if(!rows) return;
+  const search=(E('dtSearch')?.value||'').trim().toLowerCase();
+  const filter=E('dtFilter')?.value||'';
+  const corp=E('dtCorp')?.value||'';
+  // 필터링
+  let fr=rows;
+  if(search) fr=fr.filter(r=>String(r[I.nm]||'').toLowerCase().includes(search));
+  if(filter) fr=fr.filter(r=>String(r[I.ie]||'')===filter);
+  if(corp) fr=fr.filter(r=>String(r[I.co]||'')===corp);
+  // 표시 컬럼 (주요 항목만)
+  const show=[2,8,16,14,26,28,31,32,35,39,41,42,47,49,50,51,71];
+  const showH=show.map(i=>HEADER[i]);
+  E('tbTitle').textContent='급여 상세 조회 — '+getYM(k);
+  E('dtHead').innerHTML=showH.map(h=>`<th class="r">${h}</th>`).join('');
+  E('dtBody').innerHTML=fr.slice(0,200).map(r=>{
+    return '<tr>'+show.map(i=>{
+      const v=r[i];
+      if(i<=16) return `<td>${v||''}</td>`;
+      const n=parseFloat(v)||0;
+      return `<td class="r mn-f">${n?C(n):'—'}</td>`;
+    }).join('')+'</tr>';
+  }).join('');
+  E('dtInfo').textContent=`${fr.length}명 표시 (전체 ${rows.length}명)`;
+  // 법인 필터 options
+  if(!E('dtCorp').options.length || E('dtCorp').options.length<=1){
+    const cs=[...new Set(rows.map(r=>String(r[I.co]||'')).filter(Boolean))].sort();
+    E('dtCorp').innerHTML='<option value="">전체법인</option>'+cs.map(c=>`<option>${c}</option>`).join('');
+  }
+}
+
+// ════ 개인별 급여 조회 ════
+function rPersonInit(){
+  const ks=sKeys();
+  const fS=E('psFrom'),tS=E('psTo'),nS=E('psName');
+  fS.innerHTML=ks.map(k=>`<option value="${k}">${k}</option>`).join('');
+  tS.innerHTML=ks.map(k=>`<option value="${k}">${k}</option>`).join('');
+  fS.value=ks[0];tS.value=ks.slice(-1)[0];
+  // 전체 고유 성명
+  const names=new Set();
+  ks.forEach(k=>DETAIL[k]?.forEach(r=>{const n=String(r[I.nm]||'').replace(/\d+$/,'');if(n)names.add(n);}));
+  E('psNameList').innerHTML=[...names].sort().map(n=>`<option value="${n}">`).join('');
+}
+
+function rPerson(){
+  const from=E('psFrom').value, to=E('psTo').value, name=E('psName').value;
+  if(!name){noti('성명을 선택하세요','er');return;}
+  const ks=sKeys().filter(k=>k>=from&&k<=to);
+  const payItems=['기본급','고정초과근무','고정출장','고정휴일수당','(평)연장수당','(휴)근무수당','(휴)연장수당','출장수당','돌발수당','해외수당','직무수당','급여차감/추가','식대','자가운전','지급금액','국민연금','건강보험','고용보험','소득세','공 제 액','실수령액'];
+    const timeItems=[{h:17,p:32,l:'(평)연장'},{h:19,p:34,l:'(평)야간'},{h:20,p:35,l:'(휴)근무'},{h:21,p:36,l:'(휴)연장'},{h:23,p:38,l:'(휴)야간'},{h:24,p:39,l:'출장'},{h:25,p:41,l:'돌발'}];
+  const payIdx=payItems.map(p=>HEADER.indexOf(p));
+
+  let html='';
+  ks.forEach(k=>{
+    const rows=DETAIL[k]; if(!rows) return;
+    const pr=rows.filter(r=>{const rn=String(r[I.nm]||'').replace(/\d+$/,'');return rn===name;});
+    if(!pr.length) return;
+    // 합산
+    const sum={};
+    payItems.forEach((p,i)=>{sum[p]=0;pr.forEach(r=>{sum[p]+=parseFloat(r[payIdx[i]])||0;});});
+    const info=pr[0];
+    html+=`<div class="person-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div><span class="mn-f" style="color:var(--bl);font-size:13px;">${k}</span> <span style="color:var(--mt);font-size:11px;">${String(info[I.co]||'')} · ${String(info[I.ie]||'')} · ${String(info[I.tp]||'')}</span></div>
+        <div class="mn-f" style="font-size:14px;font-weight:600;color:var(--tl)">${C(Math.round(sum['지급금액']))}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
+        ${payItems.map(p=>`<div class="pay-item"><span class="pl">${p}</span><span class="pv ${sum[p]<0?'dn':sum[p]>0?'':'nu'}">${sum[p]?C(Math.round(sum[p])):'—'}</span></div>`).join('')}
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);">
+        <div style="font-size:10px;color:var(--hn);margin-bottom:4px;">연장근로 시간 · 수당 · 산출식</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:2px;">
+          ${(()=>{
+            const bs2=pr.reduce((s2,r2)=>s2+(parseFloat(r2[26])||0),0);
+            const hourlyBase=bs2>0?Math.round(bs2/209):0;
+            const rates={'(평)연장':1.5,'(평)야간':0.5,'(휴)근무':1.5,'(휴)연장':2.0,'(휴)야간':0.5};
+            const timeRows=timeItems.map(ti=>{
+              const hrs=pr.reduce((s2,r2)=>s2+(parseFloat(r2[ti.h])||0),0);
+              const pay2=pr.reduce((s2,r2)=>s2+(parseFloat(r2[ti.p])||0),0);
+              if(!hrs&&!pay2)return '';
+              const rate=rates[ti.l]||1.0;
+              const calc=hourlyBase>0?`${C(hourlyBase)}원 × ${rate} × ${hrs}h = ${C(Math.round(hourlyBase*rate*hrs))}원`:'';
+              const diff2=pay2>0&&hourlyBase>0?Math.round(pay2-hourlyBase*rate*hrs):0;
+              return `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:.5px solid rgba(255,255,255,.04);font-size:11px;">
+                <span style="color:var(--mt);min-width:60px;">${ti.l} ${hrs}h</span>
+                <span class="mn-f" style="color:var(--hn);flex:1;text-align:center;font-size:10px;">${calc}</span>
+                <span class="mn-f" style="min-width:80px;text-align:right;">${C(Math.round(pay2))}</span>
+                ${Math.abs(diff2)>100?'<span style="font-size:9px;color:var(--gd);margin-left:4px;">(차이:'+C(diff2)+')</span>':''}
+              </div>`;
+            }).filter(Boolean);
+            if(!timeRows.length)return '<div style="font-size:11px;color:var(--hn);">연장근로 없음</div>';
+            return (hourlyBase?'<div style="font-size:10px;color:var(--bl);margin-bottom:2px;">통상시급 추정: 기본급 '+C(bs2)+' ÷ 209h = <strong>'+C(hourlyBase)+'원/h</strong></div>':'')+timeRows.join('');
+          })()}
+        </div>
+      </div>
+    </div>`;
+  });
+  if(!html) html='<div style="padding:20px;text-align:center;color:var(--hn);">해당 기간에 데이터가 없습니다.</div>';
+  E('psResult').innerHTML=`<div class="person-name">${name}</div>`+html;
+}
+
+// ════ 업로드 ════
+let pendingUpload=null;
+function handleDrop(e){e.preventDefault();E('uplZone').classList.remove('dg');if(e.dataTransfer.files[0])handleUpload(e.dataTransfer.files[0]);}
+function handleUpload(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+      if(rows.length<2){noti('데이터 없음','er');return;}
+      const hdr=rows[0].map(h=>String(h||'').trim().replace('소속볍인','소속법인'));
+      const nmI=hdr.indexOf('성명'),pyI=hdr.indexOf('지급금액');
+      if(nmI<0||pyI<0){noti('필수 컬럼 없음','er');return;}
+      // 파일명에서 자동 감지 → 셀렉트에 반영
+      const fn=file.name.match(/(\d{4})년.?(\d{1,2})월/);
+      if(fn){
+        const detYr=parseInt(fn[1]),detMo=parseInt(fn[2]);
+        if(E('uplYear'))E('uplYear').value=detYr;
+        if(E('uplMonth'))E('uplMonth').value=detMo;
+      }
+      // 최종 연도·월은 셀렉트 값 사용 (사용자가 수정 가능)
+      const yr=parseInt(E('uplYear')?.value||2026);
+      const mo=parseInt(E('uplMonth')?.value||(new Date().getMonth()+1));
+      const key=`${yr}-${String(mo).padStart(2,'0')}`;
+      const data=rows.slice(1).filter(r=>r[nmI]&&String(r[nmI]).trim()&&String(r[nmI]).trim()!=='nan');
+      // HEADER 순서로 변환
+      const detail=data.map(r=>{
+        return HEADER.map((col,i)=>{
+          if(i===0)return yr;if(i===1)return mo;
+          if(col==='비용부담'){const c=String(r[hdr.indexOf('소속법인')]||'').trim();return HB.has(c)?'한백계열':'한백계열외';}
+          const si=hdr.indexOf(col);if(si<0)return '';
+          const v=r[si];if(v==null||v===undefined)return '';
+          if(col==='소속법인')return String(v).trim().replace('소속볍인','소속법인');
+          if(col==='입사일'||col==='퇴사일'){try{return v instanceof Date?v.toISOString().slice(0,10):String(v).slice(0,10);}catch(e){return '';}}
+          const n=parseFloat(v);return isNaN(n)?String(v||''):n;
+        });
+      });
+      let tp=0,tn=0,ip=0,ep=0,inN=0,enN=0;
+      const corps={};
+      detail.forEach(r=>{
+        const py=parseFloat(r[I.py])||0,nt2=parseFloat(r[I.nt])||0,co=String(r[I.co]||''),ie=String(r[I.ie]||'');
+        tp+=py;tn+=nt2;
+        if(ie==='내부'){ip+=py;inN++;}if(ie==='외부'){ep+=py;enN++;}
+        if(co&&co!=='nan'){if(!corps[co])corps[co]={n:0,pay:0,int_n:0,ext_n:0,hb:HB.has(co)};corps[co].n++;corps[co].pay+=py;if(ie==='내부')corps[co].int_n++;if(ie==='외부')corps[co].ext_n++;}
+      });
+      pendingUpload={key,yr,mo,detail,agg2:{yr,mo,total_n:detail.length,int_n:inN,ext_n:enN,pay:Math.round(tp),net:Math.round(tn),int_pay:Math.round(ip),ext_pay:Math.round(ep),base:Math.round(detail.reduce((s,r)=>s+(parseFloat(r[I.bs])||0),0)),corps}};
+      // 기존 데이터 존재 여부 확인 → 경고 표시
+      const existData=AGG[key];
+      let warnHtml='';
+      if(existData){
+        const payDiff=Math.round(tp)-existData.pay;
+        warnHtml=`<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.25);border-radius:6px;padding:10px 12px;margin-top:8px;font-size:12px;color:#F85149;line-height:1.8;">
+          <strong>⚠ ${yr}년 ${mo}월 기존 데이터가 존재합니다</strong><br>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:6px 0;font-size:11px;">
+            <span style="color:var(--mt);">기존 데이터</span><span>${existData.total_n}명 · ${M(existData.pay)}</span>
+            <span style="color:var(--mt);">업로드 데이터</span><span>${detail.length}명 · ${M(tp)}</span>
+            <span style="color:var(--mt);">지급금액 차이</span><span style="color:${payDiff>0?'var(--tl)':'var(--rd)'};">${payDiff>0?'+':''}${C(payDiff)}원</span>
+          </div>
+          <span style="color:rgba(248,81,73,.8);font-size:11px;">업로드 시 기존 ${yr}년 ${mo}월 데이터는 <strong>완전히 삭제</strong>되고 새 데이터로 대체됩니다.</span>
+        </div>`;
+      }
+      E('uplInfo').innerHTML=`<strong>📄 ${file.name}</strong><br><span style="color:var(--bl);font-weight:500;">${yr}년 ${mo}월</span> · ${detail.length}명 (내부${inN}/외부${enN})<br>지급: <strong>${M(tp)}</strong> / 실수령: ${M(tn)}<br><span style="font-size:10px;color:var(--hn);">연도·월이 다르면 위 셀렉트에서 수정 후 반영하세요</span>${warnHtml}`;
+      checkUplExist();
+      E('uplPreview').style.display='';
+    }catch(err){noti('파싱 오류: '+err.message,'er');}
+  };
+  reader.readAsArrayBuffer(file);
+}
+function confirmUpload(){
+  if(!pendingUpload)return;
+  // 셀렉트에서 최종 연도·월 다시 읽기 (사용자가 변경했을 수 있음)
+  const finalYr=parseInt(E('uplYear')?.value||pendingUpload.yr);
+  const finalMo=parseInt(E('uplMonth')?.value||pendingUpload.mo);
+  const finalKey=`${finalYr}-${String(finalMo).padStart(2,'0')}`;
+  const{detail}=pendingUpload;
+  // detail의 연도·월 열도 수정
+  detail.forEach(r=>{r[0]=finalYr;r[1]=finalMo;});
+  // 집계 재계산
+  let tp=0,tn2=0,ip=0,ep=0,inN=0,enN=0;const corps={};
+  detail.forEach(r=>{
+    const py=parseFloat(r[I.py])||0,nt3=parseFloat(r[I.nt])||0,co=String(r[I.co]||''),ie=String(r[I.ie]||'');
+    tp+=py;tn2+=nt3;if(ie==='내부'){ip+=py;inN++;}if(ie==='외부'){ep+=py;enN++;}
+    if(co){if(!corps[co])corps[co]={n:0,pay:0,int_n:0,ext_n:0,hb:HB.has(co)};corps[co].n++;corps[co].pay+=py;if(ie==='내부')corps[co].int_n++;if(ie==='외부')corps[co].ext_n++;}
+  });
+  const newAgg={yr:finalYr,mo:finalMo,total_n:detail.length,int_n:inN,ext_n:enN,pay:Math.round(tp),net:Math.round(tn2),int_pay:Math.round(ip),ext_pay:Math.round(ep),base:Math.round(detail.reduce((s,r)=>s+(parseFloat(r[I.bs])||0),0)),corps};
+
+  const existing=AGG[finalKey];
+  if(existing&&!pendingUpload.confirmed){
+    E('uplWarn').style.display='';
+    E('uplWarn').innerHTML=`<div style="background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);border-radius:6px;padding:12px;line-height:1.8;">
+      <strong style="color:#F85149;">⚠ ${finalYr}년 ${finalMo}월 기존 데이터 삭제 확인</strong><br>
+      <span style="font-size:12px;color:var(--tx);">기존 ${existing.total_n}명 데이터가 <strong>완전히 삭제</strong>되고<br>새로 업로드한 ${detail.length}명 데이터로 대체됩니다.</span><br><br>
+      <button class="btn btn-p" onclick="pendingUpload.confirmed=true;confirmUpload();" style="font-size:11px;background:#F85149;">🗑 기존 삭제 후 대체</button>
+      <button class="btn btn-s" onclick="cancelUpload();" style="font-size:11px;">취소</button>
+    </div>`;
+    return;
+  }
+  // 기존 데이터 삭제 → 새 데이터로 대체
+  delete DETAIL[finalKey];
+  delete AGG[finalKey];
+  DETAIL[finalKey]=detail;
+  AGG[finalKey]=newAgg;
+  const action=existing?'대체':'추가';
+  pendingUpload=null;
+  E('uplPreview').style.display='none';
+  E('uplWarn').style.display='none';
+  // 최종 업데이트 표시
+  updateLastUpdate();
+  noti(`${finalKey} 데이터 ${action} 완료 (${detail.length}명 / ${M(tp)})`,'ok');
+  rUpload();
+  // Sheets 연동 시 자동 저장
+  if(gasUrl()){
+    gasLog('업로드 데이터 Sheets 저장 시작...');
+    (async()=>{
+      try{
+        const parts=finalKey.split('-');
+        await gasPost('save_detail',{data:{yr:parts[0],mo:parts[1],key:finalKey,rows:detail}});
+        await gasPost('save_monthly',{data:{...AGG[finalKey],key:finalKey}});
+        gasLog('✓ '+finalKey+' Sheets 저장 완료');
+        noti(finalKey+' Sheets 자동 저장 완료','ok');
+      }catch(e){gasLog('✗ Sheets 저장 실패: '+e.message);}
+    })();
+  }
+  // Sheets 미연결 시에만 새 HTML 다운로드 제안
+  if(!gasUrl()){
+    setTimeout(()=>{
+      if(confirm(finalKey+' 데이터가 반영되었습니다.\n\nGoogle Sheets 미연결 상태입니다.\n데이터 포함 새 HTML을 다운로드하시겠습니까?')){
+        downloadNewHtml();
+      }
+    },500);
+  }
+}
+function cancelUpload(){pendingUpload=null;E('uplPreview').style.display='none';}
+function downloadNewHtml(){
+  var curGasUrl=gasUrl()||'';
+  if(!pendingUpload&&!confirm('현재 데이터로 HTML 생성?'))return;
+  if(pendingUpload)confirmUpload();
+  noti('HTML 생성 중...','in');
+  // 현재 HTML 소스에서 DETAIL/AGG 부분을 교체한 새 HTML 생성
+  const src=document.documentElement.outerHTML;
+  const detailStr='const DETAIL='+JSON.stringify(DETAIL)+';';
+  const aggStr='const AGG='+JSON.stringify(AGG)+';';
+  let newHtml=src.replace(/const DETAIL=\{.*?\};/s,detailStr).replace(/const AGG=\{.*?\};/s,aggStr);
+  const blob=new Blob([newHtml],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`한백_급여관리_시스템_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  noti('다운로드 완료','ok');
+}
+function rUpload(){
+  const ks=sKeys();
+  // 연도 셀렉트 초기화
+  const yS=E('uplYear');
+  if(yS&&!yS.options.length){
+    [2024,2025,2026,2027].forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y+'년';yS.appendChild(o);});
+    yS.value=2026;
+  }
+  // 월 자동 감지: 최신 데이터 다음 월
+  const lk=lKey();
+  if(lk){
+    const d=AGG[lk];
+    const nextMo=d.mo<12?d.mo+1:1;
+    const nextYr=d.mo<12?d.yr:d.yr+1;
+    if(yS)yS.value=nextYr;
+    const mS=E('uplMonth');if(mS)mS.value=nextMo;
+  }
+  checkUplExist();
+  // 연도·월 변경 시 기존 데이터 확인
+  if(yS)yS.onchange=checkUplExist;
+  const mS2=E('uplMonth');if(mS2)mS2.onchange=checkUplExist;
+
+  E('uplStatus').innerHTML=ks.slice().reverse().slice(0,8).map(k=>{const d=AGG[k];
+    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--bd);font-size:12px;"><span class="mn-f">${k}</span><span>${d.total_n}명 / ${M(d.pay)}</span></div>`;}).join('');
+
+}
+
+function checkUplExist(){
+  const yr=E('uplYear')?.value, mo=E('uplMonth')?.value;
+  if(!yr||!mo)return;
+  const key=`${yr}-${String(parseInt(mo)).padStart(2,'0')}`;
+  const el=E('uplExist');
+  if(AGG[key]){
+    el.innerHTML=`<span style="font-size:10px;color:#F85149;background:rgba(248,81,73,.1);padding:2px 8px;border-radius:100px;">⚠ 기존 ${AGG[key].total_n}명 / ${M(AGG[key].pay)} → 업로드 시 삭제 후 대체</span>`;
+  }else{
+    el.innerHTML=`<span class="bd b-ok">신규 월</span>`;
+  }
+}
+
+// ════ 데이터 다운로드 ════
+function rDownload(){
+  var ks=sKeys();
+  var fS=E('dlFrom'),tS=E('dlTo');
+  if(fS){fS.innerHTML=ks.map(function(k){return '<option value="'+k+'">'+k+'</option>';}).join('');fS.value=ks[0];}
+  if(tS){tS.innerHTML=ks.map(function(k){return '<option value="'+k+'">'+k+'</option>';}).join('');tS.value=ks[ks.length-1];}
+  if(fS)fS.onchange=updateDlPreview;
+  if(tS)tS.onchange=updateDlPreview;
+  updateDlPreview();
+  // 현황
+  var totalRows=ks.reduce(function(s,k){return DETAIL[k]?s+DETAIL[k].length:s;},0);
+  var statusHtml=ks.slice().reverse().map(function(k){var d=AGG[k];
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--bd);font-size:12px;"><span class="mn-f">'+k+'</span><span>'+d.total_n+'명 / '+M(d.pay)+'</span></div>';}).join('');
+  if(E('dlStatus'))E('dlStatus').innerHTML=statusHtml;
+  if(E('dlInfo'))E('dlInfo').textContent='전체: '+ks.length+'개월 / '+totalRows.toLocaleString()+'행 / '+HEADER.length+'열';
+}
+
+function updateDlPreview(){
+  var from=E('dlFrom')?E('dlFrom').value:'';
+  var to=E('dlTo')?E('dlTo').value:'';
+  if(!from||!to)return;
+  var ks=sKeys().filter(function(k){return k>=from&&k<=to;});
+  var totalRows=ks.reduce(function(s,k){return DETAIL[k]?s+DETAIL[k].length:s;},0);
+  var totalPay=ks.reduce(function(s,k){return AGG[k]?s+AGG[k].pay:s;},0);
+  if(E('dlPreview'))E('dlPreview').innerHTML='<span style="color:var(--bl);font-weight:500;">'+from+' ~ '+to+'</span><br>'+ks.length+'개월 · '+totalRows.toLocaleString()+'행 · 지급합계 '+M(totalPay);
+}
+
+function getDownloadRows(){
+  var from=E('dlFrom')?E('dlFrom').value:'';
+  var to=E('dlTo')?E('dlTo').value:'';
+  var ks=sKeys().filter(function(k){return k>=from&&k<=to;});
+  var rows=[];
+  ks.forEach(function(k){var dr=DETAIL[k];if(dr)dr.forEach(function(r){rows.push(r);});});
+  return {keys:ks,rows:rows,from:from,to:to};
+}
+
+function downloadRawExcel(){
+  var result=getDownloadRows();
+  var rows=result.rows;
+  if(!rows.length){noti('데이터 없음','er');return;}
+  noti('Excel 생성 중... ('+rows.length+'행)','in');
+  try{
+    var wb=XLSX.utils.book_new();
+    var wsData=[HEADER].concat(rows);
+    var ws=XLSX.utils.aoa_to_sheet(wsData);
+    ws['!cols']=[{wch:6},{wch:4},{wch:10},{wch:12},{wch:12},{wch:6},{wch:6},{wch:6},
+      {wch:12},{wch:12},{wch:12},{wch:12},{wch:12},{wch:8},{wch:10},{wch:8},{wch:8}].concat(
+      Array(56).fill({wch:12}));
+    XLSX.utils.book_append_sheet(wb,ws,'RAW_DATA');
+    var fileName='급여_RAW_DATA_'+result.from+'_'+result.to+'.xlsx';
+    XLSX.writeFile(wb,fileName);
+    if(E('dlInfo'))E('dlInfo').textContent=fileName+' ('+rows.length+'행)';
+    noti('Excel 다운로드 완료','ok');
+  }catch(e){noti('오류: '+e.message,'er');}
+}
+
+function downloadRawCsv(){
+  var result=getDownloadRows();
+  var rows=result.rows;
+  if(!rows.length){noti('데이터 없음','er');return;}
+  noti('CSV 생성 중...','in');
+  try{
+    var NL=String.fromCharCode(10);
+    var BOM=String.fromCharCode(0xFEFF);
+    var csv=BOM+HEADER.join(',')+NL;
+    rows.forEach(function(r){
+      csv+=r.map(function(v){
+        var s=String(v==null?'':v);
+        if(s.indexOf(',')>=0||s.indexOf('"')>=0)return '"'+s.replace(/"/g,'""')+'"';
+        return s;
+      }).join(',')+NL;
+    });
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='급여_RAW_DATA_'+result.from+'_'+result.to+'.csv';
+    a.click();
+    noti('CSV 다운로드 완료','ok');
+  }catch(e){noti('오류: '+e.message,'er');}
+}
+
+// ════ 근로계약 비교 ════
+let refData=null;
+function handleRef(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1});const h=rows[0].map(v=>String(v||'').trim());const ni=h.findIndex(x=>x==='직원명'||x==='성명'),bi=h.findIndex(x=>x==='기본급');refData={};rows.slice(1).filter(r=>r[ni]).forEach(r=>{refData[String(r[ni]).trim()]={bs:parseFloat(r[bi])||0};});noti(`근로계약 ${Object.keys(refData).length}명 로드`,'ok');}catch(e){noti('오류: '+e.message,'er');}};r.readAsArrayBuffer(file);}
+function rCompare(){E('cmpMon').innerHTML=sKeys().map(k=>`<option value="${k}">${k}</option>`).join('');E('cmpMon').value=lKey();}
+function runCompare(){
+  if(!refData){noti('근로계약 파일 먼저 업로드','er');return;}
+  const k=E('cmpMon').value,rows=DETAIL[k];if(!rows){noti('데이터 없음','er');return;}
+  const pm=agg(rows);
+  let match=0,diff=0,miss=0;
+  const results=[];
+  Object.entries(refData).forEach(([nm,ref])=>{
+    const p=pm[nm];
+    if(!p){miss++;results.push({nm,co:'—',ref:ref.bs,act:null,d:null,st:'miss'});return;}
+    const d2=p.bs-ref.bs;
+    if(Math.abs(d2)<100){match++;results.push({nm,co:p.co,ref:ref.bs,act:p.bs,d:d2,st:'ok'});}
+    else{diff++;results.push({nm,co:p.co,ref:ref.bs,act:p.bs,d:d2,st:'diff'});}
+  });
+  E('cmpResult').innerHTML=`일치: <span class="bd b-ok">${match}명</span> 불일치: <span class="bd b-w">${diff}명</span> 미존재: <span class="bd b-er">${miss}명</span>`;
+  E('cmpTable').style.display='';
+  E('cmpBody').innerHTML=results.filter(r=>r.st!=='ok').map(r=>`<tr><td><strong>${r.nm}</strong></td><td>${r.co}</td><td class="r mn-f">${C(Math.round(r.ref))}</td><td class="r mn-f">${r.act!=null?C(Math.round(r.act)):'—'}</td><td class="r mn-f ${r.d>0?'up':r.d<0?'dn':''}">${r.d!=null?C(Math.round(r.d)):'—'}</td><td><span class="bd ${r.st==='diff'?'b-w':'b-er'}">${r.st==='diff'?'불일치':'미존재'}</span></td></tr>`).join('');
+}
+
+// ════ Claude 연동 ════
+function rClaude(){E('cpMon').innerHTML=sKeys().map(k=>`<option value="${k}">${k}</option>`).join('');E('cpMon').value=lKey();genPrompt();}
+function genPrompt(){
+  const k=E('cpMon')?.value;if(!k||!AGG[k])return;const d=AGG[k],ks=sKeys(),pk=ks[ks.indexOf(k)-1],p=pk?AGG[pk]:null;
+  const ver=E('cpVer')?.value||'',spec=E('cpSpec')?.value||'';
+  E('cpBox').textContent=`${d.yr}년 ${d.mo}월 급여 확정자료야. RAW_DATA 업데이트하고 대시보드 만들어줘.\n\n■ 확정 버전: ${ver}\n■ 인원: ${d.total_n}명 (내부${d.int_n}/외부${d.ext_n})\n■ 지급금액: ${C(d.pay)}원\n${p?`■ 전월比: ${M(d.pay-p.pay)} (${PCT(d.pay,p.pay)})`:''}\n\n■ 법인별:\n${Object.entries(d.corps).sort((a,b)=>b[1].pay-a[1].pay).map(([n,c])=>`  ${n}: ${c.n}명/${M(c.pay)}`).join('\n')}\n${spec?`\n■ 특이사항:\n${spec}`:''}`;
+}
+async function testApi(){const k=E('apiKey').value;if(!k){noti('API Key 입력','er');return;}try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,messages:[{role:'user',content:'안녕'}]})});noti(r.ok?'연결 성공 ✓':'오류: '+r.status,r.ok?'ok':'er');}catch(e){noti('연결 실패','er');}}
+async function callApi(){const k=E('apiKey').value;if(!k){noti('API Key','er');return;}const key=lKey(),d=AGG[key],type=E('apiType').value;const prompts={summary:`${d.yr}년 ${d.mo}월 급여 분석. 인원:${d.total_n}(내${d.int_n}/외${d.ext_n}), 지급:${M(d.pay)}. 핵심3가지.`,trend:'2025~2026 추이 분석.',corp:`법인별: ${JSON.stringify(Object.entries(d.corps).map(([n,c])=>({법인:n,인원:c.n,지급:M(c.pay)})))}`,check:`${d.yr}년 ${d.mo}월 점검사항 5가지.`};E('apiOut').textContent='분석 중...';try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompts[type]}]})});if(!r.ok){E('apiOut').textContent='오류: '+await r.text();return;}const data=await r.json();E('apiOut').textContent=data.content[0].text;}catch(e){E('apiOut').textContent='오류: '+e.message;}}
+
+// ════ GAS ════
+function gasLog(msg){const el=E('gasLog');if(el){el.innerHTML='['+new Date().toLocaleTimeString()+'] '+msg+'<br>'+el.innerHTML;}}
+function gasUrl(){return GAS_URL||localStorage.getItem('hb_gas');}
+
+// ════ Sheets 자동 로드 ════
+async function gasAutoLoad(){
+  gasLog('앱 시작 — Sheets 자동 로드...');
+  noti('Sheets에서 데이터 불러오는 중...','in');
+  try{
+    const monthly=await gasGet('monthly');
+    if(monthly.error){gasLog('Sheets 연결 실패: '+monthly.error);noti('Sheets 연결 실패 — 내장 데이터로 시작','er');rDash();return;}
+    const remoteKeys=Object.keys(monthly).sort();
+    if(!remoteKeys.length){gasLog('Sheets 비어있음 — 내장 데이터 사용');noti('Sheets 비어있음','in');rDash();return;}
+    gasLog('Sheets 보유: '+remoteKeys.length+'개월');
+
+    // 로컬에 없는 월만 가져오기
+    const localKeys=new Set(sKeys());
+    const toFetch=remoteKeys.filter(k=>!localKeys.has(k));
+    // 로컬에 있지만 Sheets에도 있는 경우 AGG 업데이트
+    remoteKeys.filter(k=>localKeys.has(k)).forEach(k=>{
+      const ma=monthly[k];
+      if(ma.corps) AGG[k].corps=ma.corps;
+    });
+
+    if(toFetch.length>0){
+      gasLog('새 데이터 '+toFetch.length+'개월 불러오기...');
+      let fetched=0;
+      for(const k of toFetch){
+        try{
+          const detail=await gasGet('detail',{key:k});
+          if(Array.isArray(detail)&&detail.length>0){
+            DETAIL[k]=detail;
+            const ma=monthly[k];
+            AGG[k]={yr:Number(ma.yr),mo:Number(ma.mo),total_n:ma.total_n,int_n:ma.int_n,ext_n:ma.ext_n,
+              pay:ma.pay,net:ma.net,int_pay:ma.int_pay,ext_pay:ma.ext_pay,base:ma.base||0,
+              version:ma.version||'',note:ma.note||'',corps:ma.corps||{}};
+            fetched++;
+            gasLog('✓ '+k+' ('+detail.length+'명)');
+          }
+        }catch(e){gasLog('✗ '+k+': '+e.message);}
+        noti('불러오는 중: '+k,'in');
+      }
+      gasLog('자동 로드 완료: '+fetched+'개월 추가');
+    } else {
+      gasLog('✓ 모든 데이터 최신 상태');
+    }
+    G_KEY=sKeys().slice(-1)[0]||G_KEY;
+    updateLastUpdate();
+    noti('Sheets 동기화 완료 ('+remoteKeys.length+'개월)','ok');
+  }catch(e){
+    gasLog('자동 로드 실패: '+e.message+' — 내장 데이터로 시작');
+    noti('Sheets 연결 실패 — 내장 데이터 사용','er');
+  }
+  rDash();
+}
+
+function gasConnect(){const u=E('gasUrl').value.trim();if(!u){noti('URL 입력','er');return;}localStorage.setItem('hb_gas',u);E('gasStatus').innerHTML='<span style="color:var(--tl)">✓ 연결됨</span>';noti('URL 저장 완료','ok');gasLog('URL 저장: '+u.substring(0,40)+'...');
+  if(!GAS_URL)gasLog('\u{1F4A1} HTML 다운로드 시 URL이 파일에 내장됩니다.');}
+
+async function gasPost(action,data){
+  const u=gasUrl();if(!u)throw new Error('URL 미설정');
+  const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action,...data})});
+  return await r.json();
+}
+async function gasGet(action,params){
+  const u=gasUrl();if(!u)throw new Error('URL 미설정');
+  const qs=new URLSearchParams({action,...(params||{})}).toString();
+  const r=await fetch(u+'?'+qs);
+  return await r.json();
+}
+
+async function gasInit(){
+  if(!gasUrl()){noti('URL 먼저 입력','er');return;}
+  gasLog('시트 초기화 시작...');
+  try{const d=await gasPost('init',{});gasLog(d.ok?'✓ 5개 시트 생성 완료':'✗ '+d.error);noti(d.ok?'초기화 완료':'오류','ok');}
+  catch(e){gasLog('✗ 연결 오류: '+e.message);noti('연결 오류','er');}
+}
+
+async function gasPushAll(){
+  if(!gasUrl()){noti('URL 먼저 입력','er');return;}
+  const ks=sKeys();
+  if(!ks.length){noti('데이터 없음','er');return;}
+  gasLog('전체 업로드 시작 ('+ks.length+'개월)...');
+  noti('Sheets 업로드 중... 0/'+ks.length,'in');
+  let ok=0,fail=0;
+  for(let i=0;i<ks.length;i++){
+    const k=ks[i],d=AGG[k],rows=DETAIL[k];
+    try{
+      // 개인별 상세 업로드
+      if(rows&&rows.length){
+        const parts=k.split('-');
+        await gasPost('save_detail',{data:{yr:parts[0],mo:parts[1],key:k,rows:rows}});
+      }
+      // 월별요약 업로드
+      await gasPost('save_monthly',{data:{...d,key:k}});
+      ok++;
+      gasLog('✓ '+k+' ('+((rows||[]).length)+'명)');
+    }catch(e){fail++;gasLog('✗ '+k+': '+e.message);}
+    noti('Sheets 업로드 중... '+(i+1)+'/'+ks.length,'in');
+  }
+  gasLog('업로드 완료: 성공 '+ok+' / 실패 '+fail);
+  noti('Sheets 업로드 완료 ('+ok+'/'+ks.length+')','ok');
+}
+
+async function gasPullAll(){
+  if(!gasUrl()){noti('URL 먼저 입력','er');return;}
+  gasLog('Sheets에서 데이터 불러오기 시작...');
+  noti('Sheets에서 불러오는 중...','in');
+  try{
+    // 1. 월별요약 불러오기 → 어떤 월 데이터가 있는지 파악
+    const monthly=await gasGet('monthly');
+    if(monthly.error){gasLog('✗ '+monthly.error);noti('오류','er');return;}
+    const remoteKeys=Object.keys(monthly).sort();
+    gasLog('Sheets 보유: '+remoteKeys.length+'개월 ('+remoteKeys[0]+'~'+remoteKeys[remoteKeys.length-1]+')');
+
+    // 2. 로컬에 없는 월만 개인별 상세 불러오기
+    const localKeys=new Set(sKeys());
+    const toFetch=remoteKeys.filter(k=>!localKeys.has(k));
+    gasLog('로컬 보유: '+localKeys.size+'개월 / 새로 가져올: '+toFetch.length+'개월');
+
+    if(toFetch.length===0){
+      gasLog('✓ 모든 데이터 이미 로컬에 있음');
+      noti('새 데이터 없음 — 이미 최신','ok');return;
+    }
+
+    let fetched=0;
+    for(const k of toFetch){
+      gasLog('불러오는 중: '+k+'...');
+      noti('불러오는 중: '+k+' ('+(fetched+1)+'/'+toFetch.length+')','in');
+      try{
+        const detail=await gasGet('detail',{key:k});
+        if(Array.isArray(detail)&&detail.length>0){
+          DETAIL[k]=detail;
+          // AGG 재생성
+          const ma=monthly[k];
+          AGG[k]={yr:Number(ma.yr),mo:Number(ma.mo),total_n:ma.total_n,int_n:ma.int_n,ext_n:ma.ext_n,
+            pay:ma.pay,net:ma.net,int_pay:ma.int_pay,ext_pay:ma.ext_pay,base:ma.base||0,
+            version:ma.version||'',note:ma.note||'',corps:ma.corps||{}};
+          fetched++;
+          gasLog('✓ '+k+' ('+detail.length+'명)');
+        }else{gasLog('⚠ '+k+' 상세 데이터 없음');}
+      }catch(e){gasLog('✗ '+k+': '+e.message);}
+    }
+    updateLastUpdate();
+    gasLog('불러오기 완료: '+fetched+'개월 추가');
+    noti('Sheets에서 '+fetched+'개월 불러오기 완료','ok');
+  }catch(e){gasLog('✗ 연결 오류: '+e.message);noti('연결 오류','er');}
+}
+
+async function gasSync(){
+  if(!gasUrl()){noti('URL 먼저 입력','er');return;}
+  gasLog('월별요약 동기화 시작...');
+  noti('동기화 중...','in');
+  let ok=0;
+  for(const k of sKeys()){
+    const d=AGG[k];
+    try{await gasPost('save_monthly',{data:{...d,key:k}});ok++;}catch(e){}
+  }
+  gasLog('월별요약 동기화 완료: '+ok+'개월');
+  noti('동기화 완료 ('+ok+'/'+sKeys().length+')','ok');
+}
+
+// ════ 공제항목 통계 ════
+function rDeduct(){
+  initSel('ddY','ddM',rDeduct);
+  const k=E('ddM')?.value; if(!k||!DETAIL[k]) return;
+  const d=AGG[k], rows=DETAIL[k];
+  E('tbTitle').textContent='공제항목 통계 — '+getYM(k);
+
+  // 공제 인덱스: 국민연금53,건강보험54,건강보험정산55,장기요양56,장기요양정산57,고용보험58,소득세59,지방소득세60
+  // 기타: 차용가불61,내일채움62,상조회63,학자금64,기타공제65,사택66,건보퇴직67,연말정산68,기부금69,공제액70
+  const DED=[
+    {i:53,l:'국민연금'},{i:54,l:'건강보험'},{i:55,l:'건강보험정산'},{i:56,l:'장기요양'},
+    {i:57,l:'장기요양정산'},{i:58,l:'고용보험'},{i:59,l:'소득세'},{i:60,l:'지방소득세'},
+    {i:61,l:'차용·가불'},{i:62,l:'내일채움'},{i:63,l:'상조회'},{i:65,l:'기타공제'},
+    {i:66,l:'사택관리비'},{i:68,l:'연말정산'},{i:69,l:'기부금'}
+  ];
+  const MAIN_DED=[53,54,56,58,59,60]; // 주요 공제 (KPI용)
+
+  // 항목별 합계
+  const dedTotals={};
+  DED.forEach(d2=>{dedTotals[d2.l]=0;});
+  rows.forEach(r=>{DED.forEach(d2=>{dedTotals[d2.l]+=Math.abs(parseFloat(r[d2.i])||0);});});
+
+  const totalDed=Object.values(dedTotals).reduce((s,v)=>s+v,0);
+  const totalPay=rows.reduce((s,r)=>s+(parseFloat(r[I.py])||0),0);
+  const totalNet=rows.reduce((s,r)=>s+(parseFloat(r[I.nt])||0),0);
+
+  // KPI
+  E('ddKpi').innerHTML=[
+    {l:'총 공제액',v:M(totalDed)},
+    {l:'4대보험',v:M(dedTotals['국민연금']+dedTotals['건강보험']+dedTotals['장기요양']+dedTotals['고용보험'])},
+    {l:'소득세+지방세',v:M(dedTotals['소득세']+dedTotals['지방소득세'])},
+    {l:'공제율',v:(totalDed/totalPay*100).toFixed(1)+'%'},
+    {l:'실수령률',v:(totalNet/totalPay*100).toFixed(1)+'%'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv">${x.v}</div></div>`).join('');
+
+  // 차트
+  const barItems=DED.filter(d2=>dedTotals[d2.l]>0).sort((a,b)=>dedTotals[b.l]-dedTotals[a.l]);
+  const barColors=['rgba(248,81,73,.7)','rgba(240,180,41,.7)','rgba(88,166,255,.7)','rgba(163,113,247,.7)','rgba(57,211,83,.7)','rgba(78,205,196,.7)','rgba(255,107,107,.6)','rgba(150,206,180,.7)','rgba(221,160,221,.7)'];
+  if(CH.ddB) CH.ddB.destroy();
+  CH.ddB=new Chart(E('ddBarC'),{type:'bar',data:{
+    labels:barItems.map(d2=>d2.l),
+    datasets:[{label:'공제액',data:barItems.map(d2=>dedTotals[d2.l]),backgroundColor:barColors,borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>M(v)}},y:{grid:{display:false},ticks:{font:{size:9}}}}}
+  });
+
+  const pieItems=barItems.slice(0,7);
+  if(CH.ddP) CH.ddP.destroy();
+  CH.ddP=new Chart(E('ddPieC'),{type:'doughnut',data:{
+    labels:pieItems.map(d2=>d2.l),
+    datasets:[{data:pieItems.map(d2=>Math.round(dedTotals[d2.l])),backgroundColor:barColors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:9},padding:4}}}}
+  });
+
+  // 개인별 테이블
+  const personDed=[];
+  const pm3={};
+  rows.forEach(r=>{
+    const raw=String(r[I.nm]||''), bn=raw.replace(/[\d#]+$/,'');
+    if(!bn) return;
+    if(!pm3[bn]) pm3[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),py:0,np:0,hi:0,ly:0,emp:0,tax:0,ltax:0,ded:0,net:0};
+    const p=pm3[bn], n=v=>Math.abs(parseFloat(v)||0);
+    p.py+=parseFloat(r[I.py])||0;
+    p.np+=n(r[53]);p.hi+=n(r[54]);p.ly+=n(r[56]);p.emp+=n(r[58]);
+    p.tax+=n(r[59]);p.ltax+=n(r[60]);
+    p.ded+=n(r[70]);p.net+=parseFloat(r[I.nt])||0;
+  });
+  const pList=Object.values(pm3).sort((a,b)=>b.ded-a.ded);
+  E('ddBody').innerHTML=pList.map(p=>{
+    const rate=p.py>0?(p.ded/p.py*100).toFixed(1)+'%':'—';
+    return `<tr><td><strong>${p.nm}</strong></td><td>${p.co}</td><td><span class="bd ${p.ie==='내부'?'b-i':'b-e'}">${p.ie}</span></td>
+      <td class="r mn-f">${C(Math.round(p.py))}</td>
+      <td class="r mn-f">${p.np?C(Math.round(p.np)):'—'}</td>
+      <td class="r mn-f">${p.hi?C(Math.round(p.hi)):'—'}</td>
+      <td class="r mn-f">${p.ly?C(Math.round(p.ly)):'—'}</td>
+      <td class="r mn-f">${p.emp?C(Math.round(p.emp)):'—'}</td>
+      <td class="r mn-f">${p.tax?C(Math.round(p.tax)):'—'}</td>
+      <td class="r mn-f">${p.ltax?C(Math.round(p.ltax)):'—'}</td>
+      <td class="r mn-f" style="font-weight:600;">${C(Math.round(p.ded))}</td>
+      <td class="r mn-f">${C(Math.round(p.net))}</td>
+      <td class="r">${rate}</td></tr>`;
+  }).join('');
+
+  // 법인별
+  const corpDed={};
+  pList.forEach(p=>{
+    if(!corpDed[p.co]) corpDed[p.co]={n:0,py:0,ded:0,net:0};
+    corpDed[p.co].n++;corpDed[p.co].py+=p.py;corpDed[p.co].ded+=p.ded;corpDed[p.co].net+=p.net;
+  });
+  E('ddCorpBody').innerHTML=Object.entries(corpDed).sort((a,b)=>b[1].py-a[1].py).map(([co,v])=>
+    `<tr><td>${co}</td><td class="c">${v.n}</td><td class="r mn-f">${K(v.py)}</td><td class="r mn-f">${K(v.ded)}</td><td class="r mn-f">${K(v.net)}</td><td class="r">${v.py?(v.ded/v.py*100).toFixed(1)+'%':'—'}</td></tr>`
+  ).join('');
+}
+
+// ════ 개인별 급여 Excel 다운로드 ════
+function dlPersonData(){
+  const name=E('psName')?.value;
+  if(!name){noti('성명을 입력하세요','er');return;}
+  const from=E('psFrom')?.value, to=E('psTo')?.value;
+  const ks2=sKeys().filter(k2=>k2>=from&&k2<=to);
+  const payItems2=['기본급','고정초과근무','고정출장','고정휴일수당','(평)연장수당','(휴)근무수당','(휴)연장수당','출장수당','돌발수당','해외수당','직무수당','급여차감/추가','식대','자가운전','지급금액','국민연금','건강보험','고용보험','소득세','공 제 액','실수령액'];
+  const payIdx2=payItems2.map(p=>HEADER.indexOf(p));
+  const timeItems2=[{h:17,l:'(평)연장h'},{h:19,l:'(평)야간h'},{h:20,l:'(휴)근무h'},{h:21,l:'(휴)연장h'},{h:23,l:'(휴)야간h'},{h:24,l:'출장건'},{h:25,l:'돌발건'}];
+  const headers=['연월','소속법인','내부/외부','임금형태',...payItems2,...timeItems2.map(t=>t.l)];
+  const dataRows=[];
+  ks2.forEach(k2=>{
+    const rows2=DETAIL[k2]; if(!rows2) return;
+    const pr=rows2.filter(r=>{const rn=String(r[I.nm]||'').replace(/[\d#]+$/,'');return rn===name;});
+    if(!pr.length) return;
+    const sum={};
+    payItems2.forEach((p,i2)=>{sum[p]=0;pr.forEach(r2=>{sum[p]+=parseFloat(r2[payIdx2[i2]])||0;});});
+    const timeSum={};
+    timeItems2.forEach(ti=>{timeSum[ti.l]=0;pr.forEach(r2=>{timeSum[ti.l]+=parseFloat(r2[ti.h])||0;});});
+    dataRows.push([k2,String(pr[0][I.co]||''),String(pr[0][I.ie]||''),String(pr[0][I.tp]||''),
+      ...payItems2.map(p=>Math.round(sum[p])),...timeItems2.map(t=>timeSum[t.l])]);
+  });
+  if(!dataRows.length){noti('데이터 없음','er');return;}
+  dlArrayToExcel(headers,dataRows,'개인별급여_'+name+'_'+from+'_'+to);
+}
+
+// ════ 고정급 변동 검토 ════
+function rChkFixed(){
+  initSel('cfY','cfM',rChkFixed);
+  const k=E('cfM')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  if(!pk||!DETAIL[pk]){
+    E('cfKpi').innerHTML='<div class="kc" style="grid-column:1/-1;"><div class="kl">전월 데이터 없음</div></div>';
+    E('cfBody').innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--hn);padding:20px;">전월 데이터가 없어 비교할 수 없습니다.</td></tr>';return;}
+  E('tbTitle').textContent='고정급 변동 검토 — '+getYM(k);
+
+  function aggF(rows2){
+    const m2={};
+    rows2.forEach(r=>{
+      const raw=String(r[I.nm]||''),bn=raw.replace(/[\d#]+$/,'');if(!bn)return;
+      if(!m2[bn])m2[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),tp:String(r[I.tp]||''),bs:0,ot:0,gj:0,hl:0};
+      const p=m2[bn],n=v=>parseFloat(v)||0;
+      p.bs+=n(r[26]);p.ot+=n(r[28]);p.gj+=n(r[29]);p.hl+=n(r[31]);
+    });return m2;
+  }
+  const cur=aggF(DETAIL[k]),prev=aggF(DETAIL[pk]);
+  const alerts=[];
+  Object.values(cur).forEach(c=>{
+    const p=prev[c.nm];if(!p)return;
+    const cf=c.bs+c.ot+c.gj+c.hl, pf=p.bs+p.ot+p.gj+p.hl;
+    if(Math.abs(cf-pf)<100)return;
+    const dBs=c.bs-p.bs,dOt=c.ot-p.ot,dGj=c.gj-p.gj,dHl=c.hl-p.hl;
+    let cause='';
+    if(Math.abs(dBs)>100&&dOt===0&&dGj===0&&dHl===0)cause='기본급 단독 변경 — 연봉조정 또는 일할계산';
+    else if(dBs===0&&(Math.abs(dOt)>100||Math.abs(dHl)>100))cause='근무시간 구성 변경 — 고정수당 재산정';
+    else{const ps=[];if(Math.abs(dBs)>100)ps.push('기본급');if(Math.abs(dOt)>100)ps.push('고정초과');if(Math.abs(dGj)>100)ps.push('고정출장');if(Math.abs(dHl)>100)ps.push('고정휴일');cause=ps.join('·')+' 변동';}
+    alerts.push({nm:c.nm,co:c.co,tp:c.tp,ie:c.ie,prev:Math.round(pf),cur:Math.round(cf),diff:Math.round(cf-pf),dBs:Math.round(dBs),dOt:Math.round(dOt),dGj:Math.round(dGj),dHl:Math.round(dHl),cause});
+  });
+  alerts.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+  E('cfKpi').innerHTML=[
+    {l:'고정급 변동 인원',v:alerts.length+'명',c:alerts.length?'dn':'up'},
+    {l:'증가',v:alerts.filter(a=>a.diff>0).length+'명',c:'up'},
+    {l:'감소',v:alerts.filter(a=>a.diff<0).length+'명',c:'dn'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c}">${x.v}</div></div>`).join('');
+  const fd=v=>v===0?'<span style="color:var(--hn)">—</span>':`<span class="${v>0?'up':'dn'}" style="font-weight:500">${v>0?'+':''}${C(v)}</span>`;
+  E('cfBody').innerHTML=alerts.length?alerts.map((a,i)=>
+    `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td style="font-size:11px">${a.tp}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f">${C(a.prev)}</td><td class="r mn-f">${C(a.cur)}</td><td class="r mn-f ${a.diff>0?'up':'dn'}" style="font-weight:600">${a.diff>0?'+':''}${C(a.diff)}</td><td class="r">${fd(a.dBs)}</td><td class="r">${fd(a.dOt)}</td><td class="r">${fd(a.dGj)}</td><td class="r">${fd(a.dHl)}</td><td style="font-size:11px;color:var(--mt)">${a.cause}</td></tr>`
+  ).join(''):'<tr><td colspan="13" style="text-align:center;color:var(--tl);padding:20px;">✓ 고정급 변동 인원 없음 — 전원 전월과 동일</td></tr>';
+}
+
+// ════ 포괄임금 변동 검토 ════
+function rChkPkg(){
+  initSel('cpkY','cpkM',rChkPkg);
+  const k=E('cpkM')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  if(!pk||!DETAIL[pk]){
+    E('cpkKpi').innerHTML='<div class="kc" style="grid-column:1/-1;"><div class="kl">전월 데이터 없음</div></div>';
+    E('cpkBody').innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--hn);padding:20px;">전월 데이터가 없어 비교할 수 없습니다.</td></tr>';return;}
+  E('tbTitle').textContent='포괄임금 변동 검토 — '+getYM(k);
+
+  function aggPkg(rows2){
+    const m2={};
+    rows2.forEach(r=>{
+      const raw=String(r[I.nm]||''),bn=raw.replace(/[\d#]+$/,''),tp=String(r[I.tp]||'');
+      if(!bn||tp!=='포괄임금')return;
+      if(!m2[bn])m2[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),bs:0,ot:0,gj:0,hl:0};
+      const p=m2[bn],n=v=>parseFloat(v)||0;
+      p.bs+=n(r[26]);p.ot+=n(r[28]);p.gj+=n(r[29]);p.hl+=n(r[31]);
+    });return m2;
+  }
+  const cur=aggPkg(DETAIL[k]),prev=aggPkg(DETAIL[pk]);
+  const alerts=[];
+  Object.values(cur).forEach(c=>{
+    const p=prev[c.nm];if(!p)return;
+    if(Math.abs(c.bs-p.bs)<100 && Math.abs((c.bs+c.ot+c.gj+c.hl)-(p.bs+p.ot+p.gj+p.hl))<100)return;
+    const cf=c.bs+c.ot+c.gj+c.hl,pf=p.bs+p.ot+p.gj+p.hl;
+    let cause='';
+    if(Math.abs(c.bs-p.bs)>100&&Math.abs(cf-pf)<100)cause='기본급↔고정수당 간 재배분 (총액 동일)';
+    else if(Math.abs(c.bs-p.bs)>100)cause='포괄 기본급 변동 — 계약 변경 또는 일할계산';
+    else cause='고정수당 구성 변경';
+    alerts.push({nm:c.nm,co:c.co,ie:c.ie,prevBs:Math.round(p.bs),curBs:Math.round(c.bs),diffBs:Math.round(c.bs-p.bs),prevF:Math.round(pf),curF:Math.round(cf),diffF:Math.round(cf-pf),cause});
+  });
+  alerts.sort((a,b)=>Math.abs(b.diffBs)-Math.abs(a.diffBs));
+  E('cpkKpi').innerHTML=[
+    {l:'포괄임금 변동 인원',v:alerts.length+'명',c:alerts.length?'dn':'up'},
+    {l:'기본급 변동',v:alerts.filter(a=>Math.abs(a.diffBs)>100).length+'명',c:'wr'},
+    {l:'고정급합 변동',v:alerts.filter(a=>Math.abs(a.diffF)>100).length+'명',c:'wr'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c}">${x.v}</div></div>`).join('');
+  const fd2=v=>v===0?'<span style="color:var(--hn)">—</span>':`<span class="${v>0?'up':'dn'}" style="font-weight:500">${v>0?'+':''}${C(v)}</span>`;
+  E('cpkBody').innerHTML=alerts.length?alerts.map((a,i)=>
+    `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f">${C(a.prevBs)}</td><td class="r mn-f">${C(a.curBs)}</td><td class="r">${fd2(a.diffBs)}</td><td class="r mn-f">${C(a.prevF)}</td><td class="r mn-f">${C(a.curF)}</td><td class="r">${fd2(a.diffF)}</td><td style="font-size:11px;color:var(--mt)">${a.cause}</td></tr>`
+  ).join(''):'<tr><td colspan="11" style="text-align:center;color:var(--tl);padding:20px;">✓ 포괄임금 변동 인원 없음 — 전원 전월과 동일</td></tr>';
+}
+
+// ════ 급여 총액 증감 검토 ════
+function rChkTotal(){
+  initSel('ctY','ctM',rChkTotal);
+  const k=E('ctM')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  if(!pk||!DETAIL[pk]){
+    E('ctKpi').innerHTML='<div class="kc" style="grid-column:1/-1;"><div class="kl">전월 데이터 없음</div></div>';
+    E('ctUpBody').innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--hn);padding:20px;">전월 데이터 없음</td></tr>';
+    E('ctDnBody').innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--hn);padding:20px;">전월 데이터 없음</td></tr>';return;}
+  E('tbTitle').textContent='급여 총액 증감 검토 — '+getYM(k);
+
+  function aggAll(rows2){
+    const m2={};
+    rows2.forEach(r=>{
+      const raw=String(r[I.nm]||''),bn=raw.replace(/[\d#]+$/,'');if(!bn)return;
+      if(!m2[bn])m2[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),tp:String(r[I.tp]||''),
+        py:0,bs:0,ot:0,gj:0,hl:0,eo:0,hw:0,tr:0,sr:0,ov:0,aj:0};
+      const p=m2[bn],n=v=>parseFloat(v)||0;
+      p.py+=n(r[I.py]);p.bs+=n(r[26]);p.ot+=n(r[28]);p.gj+=n(r[29]);p.hl+=n(r[31]);
+      p.eo+=n(r[32]);p.hw+=n(r[35]);p.tr+=n(r[39]);p.sr+=n(r[41]);p.ov+=n(r[42]);p.aj+=n(r[47]);
+    });return m2;
+  }
+  const cur=aggAll(DETAIL[k]),prev=aggAll(DETAIL[pk]);
+  const ups=[],dns=[];
+  Object.values(cur).forEach(c=>{
+    const p=prev[c.nm];if(!p)return;
+    const diff=c.py-p.py;if(Math.abs(diff)<100)return;
+    const pct=p.py>0?(diff/p.py*100):0;
+    const items=[
+      {l:'기본급',d:c.bs-p.bs},{l:'고정초과',d:c.ot-p.ot},{l:'고정출장',d:c.gj-p.gj},{l:'고정휴일',d:c.hl-p.hl},
+      {l:'(평)연장',d:c.eo-p.eo},{l:'(휴)근무',d:c.hw-p.hw},{l:'출장',d:c.tr-p.tr},
+      {l:'돌발',d:c.sr-p.sr},{l:'해외',d:c.ov-p.ov},{l:'차감/추가',d:c.aj-p.aj}
+    ].filter(x=>Math.abs(x.d)>5000).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
+    const reason2=items.length?items.map(x=>x.l+(x.d>0?'+':'')+Math.round(x.d/1000)+'K').join(', '):'소폭 다항목';
+    const row={nm:c.nm,co:c.co,ie:c.ie,tp:c.tp,prev:Math.round(p.py),cur:Math.round(c.py),diff:Math.round(diff),pct,reason:reason2};
+    if(diff>0)ups.push(row);else dns.push(row);
+  });
+  ups.sort((a,b)=>b.diff-a.diff);
+  dns.sort((a,b)=>a.diff-b.diff);
+  const totalUp=ups.reduce((s,r)=>s+r.diff,0),totalDn=dns.reduce((s,r)=>s+r.diff,0);
+  const bothNames=new Set(Object.keys(cur).filter(n=>prev[n]));
+  const noChange=bothNames.size-ups.length-dns.length;
+  E('ctKpi').innerHTML=[
+    {l:'증가 인원',v:ups.length+'명',c:'up'},{l:'감소 인원',v:dns.length+'명',c:'dn'},
+    {l:'변동 없음',v:noChange+'명',c:''},{l:'순증감',v:(totalUp+totalDn>0?'+':'')+M(totalUp+totalDn),c:totalUp+totalDn>0?'up':'dn'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c}">${x.v}</div></div>`).join('');
+  const mkRow=(a,i,isUp)=>`<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td style="font-size:11px">${a.tp||''}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f">${C(a.prev)}</td><td class="r mn-f">${C(a.cur)}</td><td class="r mn-f ${isUp?'up':'dn'}" style="font-weight:600">${a.diff>0?'+':''}${C(a.diff)}</td><td class="r" style="font-size:11px;${isUp?'color:var(--tl)':'color:var(--rd)'}">${a.pct>0?'+':''}${a.pct.toFixed(1)}%</td><td style="font-size:11px;color:var(--mt)">${a.reason}</td></tr>`;
+  E('ctUpBody').innerHTML=ups.length?ups.map((a,i)=>mkRow(a,i,true)).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--tl);padding:16px;">✓ 증가 인원 없음</td></tr>';
+  E('ctDnBody').innerHTML=dns.length?dns.map((a,i)=>mkRow(a,i,false)).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--tl);padding:16px;">✓ 감소 인원 없음</td></tr>';
+}
+
+
+// ════ 4대보험 증감 검토 ════
+function rChk4ins(){
+  initSel('c4Y','c4M',rChk4ins);
+  const k=E('c4M')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  E('tbTitle').textContent='4대보험 증감 검토 — '+getYM(k);
+  const bodyIds={'\uad6d\ubbfc\uc5f0\uae08':'c4NpBody','\uac74\uac15\ubcf4\ud5d8':'c4HiBody','\uc7a5\uae30\uc694\uc591':'c4LyBody','\uace0\uc6a9\ubcf4\ud5d8':'c4EmBody'};
+  if(!pk||!DETAIL[pk]){
+    E('c4Kpi').innerHTML='';
+    Object.values(bodyIds).forEach(id=>{const el=E(id);if(el)el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--hn);padding:16px;">전월 데이터 없음</td></tr>';});return;}
+
+  const INS=[{i:53,l:'국민연금',bid:'c4NpBody'},{i:54,l:'건강보험',bid:'c4HiBody'},{i:56,l:'장기요양',bid:'c4LyBody'},{i:58,l:'고용보험',bid:'c4EmBody'}];
+
+  function aggI(rows2){
+    const m={};
+    rows2.forEach(r=>{
+      const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+      if(!m[bn])m[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),ins:{}};
+      INS.forEach(d=>{m[bn].ins[d.l]=(m[bn].ins[d.l]||0)+Math.abs(parseFloat(r[d.i])||0);});
+    });return m;
+  }
+  const cur=aggI(DETAIL[k]),prev=aggI(DETAIL[pk]);
+  let totalChanges=0,totalNew=0,totalLost=0;
+
+  INS.forEach(ins=>{
+    const alerts=[];
+    Object.values(cur).forEach(c=>{
+      const p=prev[c.nm];
+      const cv=c.ins[ins.l]||0, pv=p?(p.ins[ins.l]||0):0;
+      if(Math.abs(cv-pv)<100)return;
+      let cause='';
+      if(pv===0&&cv>0){cause='신규 취득';totalNew++;}
+      else if(pv>0&&cv===0){cause='상실';totalLost++;}
+      else if(cv>pv)cause='보수월액 인상';
+      else cause='보수월액 감소 또는 정산';
+      alerts.push({nm:c.nm,co:c.co,ie:c.ie,prev:Math.round(pv),cur:Math.round(cv),diff:Math.round(cv-pv),cause});
+    });
+    // 전월에만 있는 사람
+    Object.values(prev).forEach(p=>{
+      if(cur[p.nm])return;
+      const pv=p.ins[ins.l]||0;
+      if(pv>0){alerts.push({nm:p.nm,co:p.co,ie:p.ie,prev:Math.round(pv),cur:0,diff:-Math.round(pv),cause:'퇴사 상실'});totalLost++;}
+    });
+    alerts.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+    totalChanges+=alerts.length;
+    const el=E(ins.bid);
+    if(el) el.innerHTML=alerts.length?alerts.map((a,i)=>
+      `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f">${a.prev?C(a.prev):'—'}</td><td class="r mn-f">${a.cur?C(a.cur):'—'}</td><td class="r mn-f ${a.diff>0?'up':'dn'}" style="font-weight:600">${a.diff>0?'+':''}${C(a.diff)}</td><td style="font-size:11px;color:var(--mt)">${a.cause}</td></tr>`
+    ).join(''):`<tr><td colspan="8" style="text-align:center;color:var(--tl);padding:12px;">\u2713 변동 인원 없음</td></tr>`;
+  });
+
+  E('c4Kpi').innerHTML=[
+    {l:'총 변동건수',v:totalChanges+'건',c:totalChanges?'wr':'up'},
+    {l:'신규 취득',v:totalNew+'건',c:'up'},
+    {l:'상실',v:totalLost+'건',c:totalLost?'dn':''},
+    {l:'보험료 변동',v:(totalChanges-totalNew-totalLost)+'건',c:'wr'},
+    {l:'변동 없음',v:(Object.keys(cur).length-new Set([...Object.values(cur)].filter(c=>{
+      const p=prev[c.nm];if(!p)return true;
+      return INS.some(ins=>Math.abs((c.ins[ins.l]||0)-(p.ins[ins.l]||0))>=100);
+    }).map(c=>c.nm)).size)+'명'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div></div>`).join('');
+}
+
+
+// ════ 4대보험 검토 (입퇴사·소속변경) ════
+function rChk4chk(){
+  initSel('c4cY','c4cM',rChk4chk);
+  const k=E('c4cM')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  E('tbTitle').textContent='4대보험 검토 — '+getYM(k);
+  if(!pk||!DETAIL[pk]){
+    E('c4cKpi').innerHTML='';
+    ['c4cJoinBody','c4cLeaveBody','c4cMoveBody'].forEach(id=>{const el=E(id);if(el)el.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--hn);padding:16px;">전월 데이터 없음</td></tr>';});return;}
+
+  const curAll={},prevAll={};
+  DETAIL[k].forEach(r=>{
+    const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+    if(!curAll[bn])curAll[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),np:0,hi:0,ly:0,emp:0,py:0};
+    const c=curAll[bn],n=v=>Math.abs(parseFloat(v)||0);
+    c.np+=n(r[53]);c.hi+=n(r[54]);c.ly+=n(r[56]);c.emp+=n(r[58]);c.py+=(parseFloat(r[I.py])||0);
+  });
+  DETAIL[pk].forEach(r=>{
+    const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+    if(!prevAll[bn])prevAll[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),np:0,hi:0,ly:0,emp:0,py:0};
+    const p=prevAll[bn],n=v=>Math.abs(parseFloat(v)||0);
+    p.np+=n(r[53]);p.hi+=n(r[54]);p.ly+=n(r[56]);p.emp+=n(r[58]);p.py+=(parseFloat(r[I.py])||0);
+  });
+  const curNames=new Set(Object.keys(curAll)),prevNames=new Set(Object.keys(prevAll));
+
+  const joined=[...curNames].filter(n=>!prevNames.has(n));
+  const left=[...prevNames].filter(n=>!curNames.has(n));
+  const moved=[...curNames].filter(n=>prevNames.has(n)&&curAll[n].co!==prevAll[n].co);
+
+  E('c4cKpi').innerHTML=[
+    {l:'신규입사',v:joined.length+'명',c:'up'},
+    {l:'퇴사',v:left.length+'명',c:left.length?'dn':''},
+    {l:'소속변경',v:moved.length+'명',c:moved.length?'wr':''},
+    {l:'총 확인 대상',v:(joined.length+left.length+moved.length)+'명'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div></div>`).join('');
+
+  E('c4cJoinBody').innerHTML=joined.length?joined.sort((a,b)=>curAll[b].py-curAll[a].py).map((n,i)=>{
+    const c=curAll[n];
+    const status=(c.np>0&&c.hi>0&&c.emp>0)?'정상 취득':'<span style="color:var(--rd)">일부 미취득 확인</span>';
+    return `<tr><td class="mn-f nu">${i+1}</td><td><strong>${c.nm}</strong></td><td>${c.co}</td><td><span class="bd ${c.ie==='내부'?'b-i':'b-e'}">${c.ie}</span></td><td class="r mn-f">${c.np?C(c.np):'—'}</td><td class="r mn-f">${c.hi?C(c.hi):'—'}</td><td class="r mn-f">${c.ly?C(c.ly):'—'}</td><td class="r mn-f">${c.emp?C(c.emp):'—'}</td><td class="r mn-f">${C(Math.round(c.py))}</td><td style="font-size:11px">${status}</td></tr>`;
+  }).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--tl);padding:12px;">신규입사 없음</td></tr>';
+
+  E('c4cLeaveBody').innerHTML=left.length?left.sort((a,b)=>prevAll[b].py-prevAll[a].py).map((n,i)=>{
+    const p=prevAll[n];
+    return `<tr><td class="mn-f nu">${i+1}</td><td><strong>${p.nm}</strong></td><td>${p.co}</td><td><span class="bd ${p.ie==='내부'?'b-i':'b-e'}">${p.ie}</span></td><td class="r mn-f">${p.np?C(p.np):'—'}</td><td class="r mn-f">${p.hi?C(p.hi):'—'}</td><td class="r mn-f">${p.ly?C(p.ly):'—'}</td><td class="r mn-f">${p.emp?C(p.emp):'—'}</td><td class="r mn-f">${C(Math.round(p.py))}</td><td style="font-size:11px;color:var(--rd)">상실 처리 필요</td></tr>`;
+  }).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--tl);padding:12px;">퇴사 없음</td></tr>';
+
+  E('c4cMoveBody').innerHTML=moved.length?moved.map((n,i)=>{
+    const c=curAll[n],p=prevAll[n];
+    const prev4=p.np+p.hi+p.ly+p.emp, cur4=c.np+c.hi+c.ly+c.emp;
+    return `<tr><td class="mn-f nu">${i+1}</td><td><strong>${c.nm}</strong></td><td>${p.co}</td><td style="color:var(--tl)"><strong>${c.co}</strong></td><td><span class="bd ${c.ie==='내부'?'b-i':'b-e'}">${c.ie}</span></td><td class="r mn-f">${C(Math.round(prev4))}</td><td class="r mn-f">${C(Math.round(cur4))}</td><td class="r mn-f ${cur4-prev4>0?'up':cur4-prev4<0?'dn':''}">${(cur4-prev4)>0?'+':''}${C(Math.round(cur4-prev4))}</td><td style="font-size:11px;color:var(--mt)">이전 법인 상실 + 현재 법인 취득 신고 확인</td></tr>`;
+  }).join(''):'<tr><td colspan="9" style="text-align:center;color:var(--tl);padding:12px;">소속변경 없음</td></tr>';
+}
+
+// ════ 기타공제 인원 검토 ════
+function rChkEtc(){
+  initSel('ceY','ceM',rChkEtc);
+  const k=E('ceM')?.value; if(!k||!DETAIL[k]) return;
+  const ks=sKeys(), pk=ks[ks.indexOf(k)-1];
+  E('tbTitle').textContent='기타공제 인원 검토 — '+getYM(k);
+
+  const ETC=[{i:61,l:'차용·가불'},{i:62,l:'내일채움공제'},{i:63,l:'상조회'},{i:64,l:'학자금상환'},{i:65,l:'기타공제'},{i:66,l:'사택관리비'},{i:67,l:'건보퇴직정산'},{i:68,l:'연말정산'},{i:69,l:'기부금'}];
+
+  function aggE(rows2){
+    const m={};
+    rows2.forEach(r=>{
+      const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+      if(!m[bn])m[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),etc:{}};
+      ETC.forEach(d=>{const v=parseFloat(r[d.i])||0;if(v!==0)m[bn].etc[d.l]=(m[bn].etc[d.l]||0)+v;});
+    });return m;
+  }
+  const cur=aggE(DETAIL[k]),prev=pk?aggE(DETAIL[pk]):{};
+  let cardsHtml='';
+  let totalItems=0,totalPeople=new Set();
+
+  ETC.forEach(etc=>{
+    const rows2=[];
+    Object.values(cur).forEach(c=>{
+      const cv=c.etc[etc.l]; if(!cv)return;
+      const p=prev[c.nm];
+      const pv=p&&p.etc[etc.l]?p.etc[etc.l]:0;
+      const diff3=Math.round(cv-pv);
+      const skipItems=['상조회','기부금'];
+      if(skipItems.includes(etc.l) && diff3===0) return;
+      rows2.push({nm:c.nm,co:c.co,ie:c.ie,prev:Math.round(pv),cur:Math.round(cv),diff:diff3});
+      totalPeople.add(c.nm);
+    });
+    if(!rows2.length)return;
+    rows2.sort((a,b)=>Math.abs(b.cur)-Math.abs(a.cur));
+    totalItems+=rows2.length;
+    const tbodyId='ce_'+etc.i;
+    cardsHtml+=`<div class="cd" style="margin-bottom:12px;position:relative;">
+      <div class="cl">${etc.l} (${rows2.length}명)</div>
+      <button class="btn btn-s" onclick="dlTable2(document.querySelector('#${tbodyId}')?.closest('table'),'${etc.l}_'+E('ceM')?.value)" style="position:absolute;right:16px;top:12px;font-size:10px;">\u2b07 Excel</button>
+      <table><thead><tr><th>#</th><th>성명</th><th>법인</th><th>구분</th><th class="r">전월금액</th><th class="r">당월금액</th><th class="r">변동</th></tr></thead>
+      <tbody id="${tbodyId}">${rows2.map((a,i)=>
+        `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f">${a.prev?C(a.prev):'—'}</td><td class="r mn-f">${C(a.cur)}</td><td class="r mn-f ${a.diff>0?'dn':a.diff<0?'up':''}">${a.diff!==0?(a.diff>0?'+':'')+C(a.diff):'—'}</td></tr>`
+      ).join('')}</tbody></table></div>`;
+  });
+
+  E('ceKpi').innerHTML=[
+    {l:'기타공제 인원',v:totalPeople.size+'명'},{l:'총 건수',v:totalItems+'건'},
+    {l:'항목 수',v:ETC.filter(e=>cardsHtml.includes(e.l)).length+'종'},{l:'공제 합계',v:M(Object.values(cur).reduce((s,c)=>s+Object.values(c.etc).reduce((s2,v)=>s2+Math.abs(v),0),0))},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div></div>`).join('');
+
+  E('ceCards').innerHTML=cardsHtml||'<div class="cd"><div style="text-align:center;color:var(--tl);padding:20px;">\u2713 기타공제 인원 없음</div></div>';
+}
+
+// ════ 기타공제 인원 검토 ════
+
+
+// ════ 급여공제 검토 ════
+function rChkDeduct(){
+  initSel('cdY','cdM',rChkDeduct);
+  const k=E('cdM')?.value; if(!k||!DETAIL[k]) return;
+  E('tbTitle').textContent='급여공제 검토 — '+getYM(k);
+  const rows=DETAIL[k];
+  // 급여공제 인덱스: 46
+  const alerts=[];
+  const pm={};
+  rows.forEach(r=>{
+    const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+    if(!pm[bn])pm[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),tp:String(r[I.tp]||''),bs:0,ded:0,py:0};
+    pm[bn].bs+=parseFloat(r[26])||0;
+    pm[bn].ded+=parseFloat(r[46])||0;
+    pm[bn].py+=parseFloat(r[I.py])||0;
+  });
+  Object.values(pm).forEach(p=>{
+    if(p.ded===0) return;
+    const ratio=p.bs>0?Math.abs(p.ded)/p.bs*100:0;
+    let cause='';
+    if(ratio>80) cause='거의 전액 공제 — 월초/월말 입퇴사 추정';
+    else if(ratio>40) cause='절반 이상 공제 — 중도입사 또는 장기 휴직 복직';
+    else if(ratio>0) cause='부분 공제 — 일할계산';
+    else cause='공제 발생';
+    alerts.push({nm:p.nm,co:p.co,ie:p.ie,tp:p.tp,bs:Math.round(p.bs),ded:Math.round(p.ded),ratio,py:Math.round(p.py),cause});
+  });
+  alerts.sort((a,b)=>Math.abs(b.ded)-Math.abs(a.ded));
+  E('cdKpi').innerHTML=[
+    {l:'급여공제 인원',v:alerts.length+'명',c:alerts.length?'wr':'up'},
+    {l:'공제 합계',v:M(alerts.reduce((s,a)=>s+Math.abs(a.ded),0))},
+    {l:'평균 공제율',v:alerts.length?(alerts.reduce((s,a)=>s+a.ratio,0)/alerts.length).toFixed(1)+'%':'—'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div></div>`).join('');
+  E('cdBody').innerHTML=alerts.length?alerts.map((a,i)=>
+    `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td style="font-size:11px">${a.tp}</td><td class="r mn-f">${C(a.bs)}</td><td class="r mn-f dn" style="font-weight:600">${C(a.ded)}</td><td class="r">${a.ratio.toFixed(1)}%</td><td class="r mn-f">${C(a.py)}</td><td style="font-size:11px;color:var(--mt)">${a.cause}</td></tr>`
+  ).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--tl);padding:20px;">✓ 급여공제 인원 없음</td></tr>';
+}
+
+// ════ 급여 추가/차감 검토 ════
+function rChkAdj(){
+  initSel('caY','caM',rChkAdj);
+  const k=E('caM')?.value; if(!k||!DETAIL[k]) return;
+  E('tbTitle').textContent='급여 추가/차감 검토 — '+getYM(k);
+  const rows=DETAIL[k];
+  // 급여차감/추가 인덱스: 47
+  const ups=[],dns=[];
+  const pm={};
+  rows.forEach(r=>{
+    const bn=String(r[I.nm]||'').replace(/[\d#]+$/,'');if(!bn)return;
+    if(!pm[bn])pm[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),adj:0,py:0};
+    pm[bn].adj+=parseFloat(r[47])||0;
+    pm[bn].py+=parseFloat(r[I.py])||0;
+  });
+  Object.values(pm).forEach(p=>{
+    if(p.adj===0) return;
+    const row={nm:p.nm,co:p.co,ie:p.ie,adj:Math.round(p.adj),py:Math.round(p.py)};
+    if(p.adj>0) ups.push(row); else dns.push(row);
+  });
+  ups.sort((a,b)=>b.adj-a.adj);
+  dns.sort((a,b)=>a.adj-b.adj);
+  E('caKpi').innerHTML=[
+    {l:'추가 지급',v:ups.length+'명',c:'up'},{l:'추가 합계',v:'+'+M(ups.reduce((s,a)=>s+a.adj,0)),c:'up'},
+    {l:'차감',v:dns.length+'명',c:'dn'},{l:'차감 합계',v:M(dns.reduce((s,a)=>s+a.adj,0)),c:'dn'},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv ${x.c||''}">${x.v}</div></div>`).join('');
+  E('caUpBody').innerHTML=ups.length?ups.map((a,i)=>
+    `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f up" style="font-weight:600">+${C(a.adj)}</td><td class="r mn-f">${C(a.py)}</td></tr>`
+  ).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--tl);padding:16px;">✓ 추가 지급 인원 없음</td></tr>';
+  E('caDnBody').innerHTML=dns.length?dns.map((a,i)=>
+    `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td><td class="r mn-f dn" style="font-weight:600">${C(a.adj)}</td><td class="r mn-f">${C(a.py)}</td></tr>`
+  ).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--tl);padding:16px;">✓ 차감 인원 없음</td></tr>';
+}
+
+
+// ════ 연장근로 통계 ════
+function rOvertime(){
+  initSel('otY','otM',rOvertime);
+  const k=E('otM')?.value; if(!k||!DETAIL[k]) return;
+  const d=AGG[k], rows=DETAIL[k], ks=sKeys();
+  E('tbTitle').textContent='연장근로 통계 — '+getYM(k);
+
+  // 연장근로 시간(출장·돌발 제외): (평)연장17,(평)연장야간18,(평)야간19,(휴)근무20,(휴)연장21,(휴)연장야간22,(휴)야간23
+  // 출장: 시간24/수당39, 돌발: 시간25/수당41
+  const OT_TI=[17,18,19,20,21,22,23]; // 연장근로 시간
+  const OT_PI=[32,33,34,35,36,37,38]; // 연장근로 수당
+  const OT_LB=['(평)연장','(평)연장야간','(평)야간','(휴)근무','(휴)연장','(휴)연장야간','(휴)야간'];
+
+  const personMap={};
+  rows.forEach(r=>{
+    const raw=String(r[I.nm]||''), bn=raw.replace(/[\d#]+$/,'');
+    if(!bn) return;
+    if(!personMap[bn]) personMap[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),
+      oh:[0,0,0,0,0,0,0],op:[0,0,0,0,0,0,0],tripH:0,tripP:0,surgeH:0,surgeP:0};
+    const pm2=personMap[bn], n=v=>parseFloat(v)||0;
+    OT_TI.forEach((ti,i)=>{pm2.oh[i]+=n(r[ti]);});
+    OT_PI.forEach((pi,i)=>{pm2.op[i]+=n(r[pi]);});
+    pm2.tripH+=n(r[24]); pm2.tripP+=n(r[39]);
+    pm2.surgeH+=n(r[25]); pm2.surgeP+=n(r[41]);
+  });
+  const persons=Object.values(personMap);
+  persons.forEach(p=>{
+    p.otTotal=p.oh.reduce((s,v)=>s+v,0);
+    p.otPay=p.op.reduce((s,v)=>s+v,0);
+  });
+  const otPersons=persons.filter(p=>p.otTotal>0).sort((a,b)=>b.otTotal-a.otTotal);
+  const tripPersons=persons.filter(p=>p.tripH>0||p.surgeH>0).sort((a,b)=>(b.tripH+b.surgeH)-(a.tripH+a.surgeH));
+
+  // KPI
+  const totOtH=otPersons.reduce((s,p)=>s+p.otTotal,0);
+  const totOtP=otPersons.reduce((s,p)=>s+p.otPay,0);
+  const totTripH=persons.reduce((s,p)=>s+p.tripH,0);
+  const totSurgeH=persons.reduce((s,p)=>s+p.surgeH,0);
+  E('otKpi').innerHTML=[
+    {l:'연장근로 인원',v:otPersons.length+'명'},
+    {l:'총 연장시간',v:Math.round(totOtH)+'h'},
+    {l:'연장수당 합계',v:M(totOtP)},
+    {l:'출장 합계',v:Math.round(totTripH)+'건 / '+M(persons.reduce((s,p)=>s+p.tripP,0))},
+    {l:'돌발 합계',v:Math.round(totSurgeH)+'건 / '+M(persons.reduce((s,p)=>s+p.surgeP,0))},
+  ].map(x=>`<div class="kc"><div class="kl">${x.l}</div><div class="kv">${x.v}</div></div>`).join('');
+
+  // 당월 연장근로 테이블 (출장·돌발 제외)
+  E('otMonthBody').innerHTML=otPersons.map(p=>`<tr>
+    <td><strong>${p.nm}</strong></td><td>${p.co}</td><td><span class="bd ${p.ie==='내부'?'b-i':'b-e'}">${p.ie}</span></td>
+    ${p.oh.map(h=>`<td class="r mn-f">${h?h+'h':'—'}</td>`).join('')}
+    <td class="r mn-f" style="font-weight:600;">${p.otTotal.toFixed(1)}h</td>
+    <td class="r mn-f up">${C(Math.round(p.otPay))}</td>
+  </tr>`).join('');
+
+  // ═══ 연간 누적 ═══
+  const yr=d.yr, yrKeys=ks.filter(x=>x.startsWith(String(yr)));
+  const yrAccum={};
+  yrKeys.forEach(yk=>{
+    const yRows=DETAIL[yk]; if(!yRows) return;
+    yRows.forEach(r=>{
+      const raw=String(r[I.nm]||''), bn=raw.replace(/[\d#]+$/,'');
+      if(!bn) return;
+      if(!yrAccum[bn]) yrAccum[bn]={nm:bn,co:String(r[I.co]||''),ie:String(r[I.ie]||''),
+        oh:[0,0,0,0,0,0,0],op:[0,0,0,0,0,0,0],tripH:0,tripP:0,surgeH:0,surgeP:0};
+      const a=yrAccum[bn], n=v=>parseFloat(v)||0;
+      OT_TI.forEach((ti,i)=>{a.oh[i]+=n(r[ti]);});
+      OT_PI.forEach((pi,i)=>{a.op[i]+=n(r[pi]);});
+      a.tripH+=n(r[24]);a.tripP+=n(r[39]);a.surgeH+=n(r[25]);a.surgeP+=n(r[41]);
+    });
+  });
+  const yrList=Object.values(yrAccum);
+  yrList.forEach(a=>{a.otTotal=a.oh.reduce((s,v)=>s+v,0);a.otPay=a.op.reduce((s,v)=>s+v,0);});
+  const yrFiltered=yrList.filter(a=>a.otTotal>0).sort((a,b)=>b.otTotal-a.otTotal);
+
+  E('otYearBody').innerHTML=yrFiltered.map((a,i)=>{
+    const avg=yrKeys.length?(a.otTotal/yrKeys.length).toFixed(1):'—';
+    return `<tr><td class="mn-f nu">${i+1}</td><td><strong>${a.nm}</strong></td><td>${a.co}</td><td><span class="bd ${a.ie==='내부'?'b-i':'b-e'}">${a.ie}</span></td>
+      ${a.oh.map(h=>`<td class="r mn-f">${h?h.toFixed(1):'—'}</td>`).join('')}
+      <td class="r mn-f" style="font-weight:700;color:${a.otTotal>300?'var(--rd)':a.otTotal>200?'var(--gd)':'var(--tl)'};">${a.otTotal.toFixed(1)}h</td>
+      <td class="r mn-f">${C(Math.round(a.otPay))}</td>
+      <td class="r mn-f">${avg}h</td></tr>`;
+  }).join('');
+
+  // 출장·돌발 테이블 (별도)
+  const tripTbody=E('otTripBody');
+  if(tripTbody) tripTbody.innerHTML=tripPersons.map(p=>`<tr>
+    <td><strong>${p.nm}</strong></td><td>${p.co}</td><td><span class="bd ${p.ie==='내부'?'b-i':'b-e'}">${p.ie}</span></td>
+    <td class="r mn-f">${p.tripH?p.tripH+'건':'—'}</td><td class="r mn-f">${p.tripP?C(Math.round(p.tripP)):'—'}</td>
+    <td class="r mn-f">${p.surgeH?p.surgeH+'건':'—'}</td><td class="r mn-f">${p.surgeP?C(Math.round(p.surgeP)):'—'}</td>
+    <td class="r mn-f" style="font-weight:600;">${C(Math.round(p.tripP+p.surgeP))}</td>
+  </tr>`).join('');
+
+  // 차트
+  const trendOt=yrKeys.map(yk=>{
+    const yR=DETAIL[yk]; if(!yR) return 0;
+    return yR.reduce((s,r)=>{let h=0;OT_TI.forEach(ti=>{h+=parseFloat(r[ti])||0;});return s+h;},0);
+  });
+  const trendTrip=yrKeys.map(yk=>{
+    const yR=DETAIL[yk]; if(!yR) return 0;
+    return yR.reduce((s,r)=>s+(parseFloat(r[24])||0),0);
+  });
+  if(CH.otT) CH.otT.destroy();
+  CH.otT=new Chart(E('otTrendC'),{type:'bar',data:{
+    labels:yrKeys.map(x=>x.split('-')[1]+'월'),
+    datasets:[
+      {label:'연장근로(h)',data:trendOt,backgroundColor:'rgba(88,166,255,.6)',borderRadius:3},
+      {label:'출장(건)',data:trendTrip,backgroundColor:'rgba(57,211,83,.5)',borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,.04)'}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{callback:v=>v+'h'}}}}
+  });
+
+  const typeH=OT_LB.map((_,i)=>otPersons.reduce((s,p)=>s+p.oh[i],0));
+  const nonZero=OT_LB.map((_,i)=>i).filter(i=>typeH[i]>0);
+  const tc2=['rgba(88,166,255,.8)','rgba(88,166,255,.5)','rgba(88,166,255,.3)','rgba(240,180,41,.8)','rgba(240,180,41,.6)','rgba(240,180,41,.4)','rgba(240,180,41,.3)'];
+  if(CH.otTy) CH.otTy.destroy();
+  CH.otTy=new Chart(E('otTypeC'),{type:'doughnut',data:{
+    labels:nonZero.map(i=>OT_LB[i]),datasets:[{data:nonZero.map(i=>Math.round(typeH[i])),backgroundColor:nonZero.map(i=>tc2[i]),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:10},padding:6}}}}
+  });
+
+  // 데이터 저장 (다운로드용)
+  window._otMonthData=otPersons;
+  window._otYearData=yrFiltered;
+  window._otTripData=tripPersons;
+}
+
+// 다운로드 함수들
+function dlAuditFixed(){
+  const tbl=document.querySelector('#auFixedBody')?.closest('table');
+  if(tbl) dlTable2(tbl,'검토_고정급변동_'+E('auM')?.value);
+}
+function dlAuditBig(){
+  const tbl=document.querySelector('#auBigBody')?.closest('table');
+  if(tbl) dlTable2(tbl,'검토_총액증감_'+E('auM')?.value);
+}
+function dlTable2(tbl,name){
+  try{const wb=XLSX.utils.book_new();const ws=XLSX.utils.table_to_sheet(tbl);XLSX.utils.book_append_sheet(wb,ws,'Sheet1');XLSX.writeFile(wb,name+'.xlsx');noti(name+'.xlsx 완료','ok');}catch(e){noti('오류','er');}
+}
+function dlOtMonth(){
+  if(!window._otMonthData) return;
+  const hd=['성명','법인','구분','(평)연장h','(평)연장야간h','(평)야간h','(휴)근무h','(휴)연장h','(휴)연장야간h','(휴)야간h','합계h','연장수당합'];
+  const rows=window._otMonthData.map(p=>[p.nm,p.co,p.ie,...p.oh,p.otTotal,p.otPay]);
+  dlArrayToExcel(hd,rows,'연장근로_당월_'+E('otM')?.value);
+}
+function dlOtYear(){
+  if(!window._otYearData) return;
+  const hd=['순위','성명','법인','구분','(평)연장h','(평)연장야간h','(평)야간h','(휴)근무h','(휴)연장h','(휴)연장야간h','(휴)야간h','연간합계h','연간수당','월평균h'];
+  const yrKeys=sKeys().filter(x=>x.startsWith(String(AGG[E('otM')?.value]?.yr)));
+  const rows=window._otYearData.map((a,i)=>[i+1,a.nm,a.co,a.ie,...a.oh,a.otTotal,a.otPay,yrKeys.length?(a.otTotal/yrKeys.length):0]);
+  dlArrayToExcel(hd,rows,'연장근로_연간누적_'+E('otM')?.value?.split('-')[0]);
+}
+
+
+// ════ 급여 보고서 ════
+function rReport(){
+  initSel('rpY','rpM',rReport,true);
+  const k=E('rpM')?.value; if(!k||!AGG[k]) return;
+  const d=AGG[k], ks=sKeys();
+  const pk=ks[ks.indexOf(k)-1], p=pk?AGG[pk]:null;
+  const yk=`${d.yr-1}-${String(d.mo).padStart(2,'0')}`, y=AGG[yk];
+  const rows=DETAIL[k], prevRows=pk?DETAIL[pk]:null;
+  const cm=rows?agg(rows):{}, pm=prevRows?agg(prevRows):{};
+
+  E('tbTitle').textContent='급여 보고서 — '+getYM(k);
+
+  // 핵심 수치
+  const dp=p?d.pay-p.pay:0, dpPct=p?dp/p.pay*100:0;
+  const yp=y?d.pay-y.pay:0, ypPct=y?yp/y.pay*100:0;
+  const dn=p?d.total_n-p.total_n:0;
+  const avgPay=d.pay/d.total_n, prevAvg=p?p.pay/p.total_n:0;
+  const intAvg=d.int_pay/d.int_n;
+
+  // 법인별 증감 TOP3
+  const corpChanges=[];
+  if(p){
+    const allC=new Set([...Object.keys(d.corps),...Object.keys(p.corps||{})]);
+    allC.forEach(c=>{
+      const cp=(d.corps[c]||{}).pay||0, pp2=(p.corps[c]||{}).pay||0;
+      corpChanges.push({name:c,diff:cp-pp2,cur:cp,prev:pp2});
+    });
+    corpChanges.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+  }
+
+  // 인원변동
+  const cN=new Set(Object.keys(cm)), pN=new Set(Object.keys(pm));
+  const joined=[...cN].filter(n=>!pN.has(n));
+  const left=[...pN].filter(n=>!cN.has(n));
+  const moved=[...cN].filter(n=>pN.has(n)&&cm[n].co!==pm[n].co);
+
+  // 급여증감 TOP5
+  const diffs=Object.keys(cm).filter(n=>pm[n]).map(n=>({
+    nm:n,co:cm[n].co,ie:cm[n].ie,df:cm[n].py-pm[n].py,rs:reason(cm[n],pm[n])
+  })).filter(x=>Math.abs(x.df)>100).sort((a,b)=>Math.abs(b.df)-Math.abs(a.df));
+
+  // 한백계열 소계
+  const hbPay=Object.entries(d.corps).filter(([,c])=>c.hb).reduce((s,[,c])=>s+c.pay,0);
+  const otPay=d.pay-hbPay;
+  const hbPct=(hbPay/d.pay*100).toFixed(1);
+
+  // ═══ 보고서 HTML 생성 ═══
+  let rpt=`
+  <div style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:24px;margin-bottom:16px;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:10px;color:var(--hn);letter-spacing:.15em;">PAYROLL REPORT</div>
+      <div style="font-size:20px;font-weight:700;margin:6px 0;">${d.yr}년 ${d.mo}월 급여 현황 보고서</div>
+      <div style="font-size:12px;color:var(--mt);">한백 계열사 · ${d.total_n}명 · ${getYM(k)} 기준</div>
+    </div>
+
+    <!-- 1. 요약 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:500;color:var(--bl);letter-spacing:.08em;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:5px;">1. 급여 지급 요약</div>
+      <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;">
+        <div class="kc"><div class="kl">총 지급금액</div><div class="kv up">${M(d.pay)}</div><div class="kd">${C(d.pay)}원</div></div>
+        <div class="kc"><div class="kl">실수령액</div><div class="kv">${M(d.net)}</div><div class="kd">${C(d.net)}원</div></div>
+        <div class="kc"><div class="kl">전월 대비</div><div class="kv ${dp>0?'up':'dn'}">${dp>0?'+':''}${M(dp)}</div><div class="kd">${dpPct>0?'+':''}${dpPct.toFixed(1)}%</div></div>
+        <div class="kc"><div class="kl">전년동월 대비</div><div class="kv ${yp>0?'up':'dn'}">${y?(yp>0?'+':'')+M(yp):'—'}</div><div class="kd">${y?(ypPct>0?'+':'')+ypPct.toFixed(1)+'%':'—'}</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--mt);line-height:1.8;padding:10px;background:var(--s2);border-radius:6px;">
+        ${d.yr}년 ${d.mo}월 급여는 총 <strong style="color:var(--tx)">${M(d.pay)}</strong>으로${p?', 전월('+M(p.pay)+') 대비 <strong style="color:'+(dp>0?'var(--tl)':'var(--rd)')+'">'+(dp>0?'+':'')+M(dp)+' ('+(dpPct>0?'+':'')+dpPct.toFixed(1)+'%)</strong> '+(dp>0?'증가':'감소'):''}하였습니다.
+        ${y?'전년 동월('+M(y.pay)+') 대비 <strong style="color:'+(yp>0?'var(--tl)':'var(--rd)')+'">'+(yp>0?'+':'')+M(yp)+'</strong> '+(yp>0?'증가하여 인건비 상승 추세가 지속':'감소')+'되고 있습니다.':''} 
+        1인 평균 지급액은 <strong style="color:var(--tx)">${M(avgPay)}</strong>${p?'(전월 '+M(prevAvg)+')':''}입니다.
+      </div>
+    </div>
+
+    <!-- 2. 인원 현황 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:500;color:var(--bl);letter-spacing:.08em;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:5px;">2. 인원 현황</div>
+      <div class="kg" style="grid-template-columns:repeat(5,1fr);margin-bottom:10px;">
+        <div class="kc"><div class="kl">총 인원</div><div class="kv">${d.total_n}명</div><div class="kd ${dn>0?'up':dn<0?'dn':'nu'}">${p?'전월比 '+(dn>0?'+':'')+dn+'명':'—'}</div></div>
+        <div class="kc"><div class="kl">내부</div><div class="kv up">${d.int_n}명</div><div class="kd">${M(d.int_pay)}</div></div>
+        <div class="kc"><div class="kl">외부</div><div class="kv wr">${d.ext_n}명</div><div class="kd">${M(d.ext_pay)}</div></div>
+        <div class="kc"><div class="kl">신규입사</div><div class="kv up">${joined.length}명</div></div>
+        <div class="kc"><div class="kl">퇴사</div><div class="kv dn">${left.length}명</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--mt);line-height:1.8;padding:10px;background:var(--s2);border-radius:6px;">
+        총 <strong style="color:var(--tx)">${d.total_n}명</strong> (내부 ${d.int_n}명 / 외부 ${d.ext_n}명) 기준입니다.
+        ${joined.length?'신규입사 <strong style="color:var(--tl)">'+joined.length+'명</strong>('+joined.slice(0,5).map(n=>cm[n].nm).join(', ')+(joined.length>5?' 외':'')+')':', 신규입사 없음'}${left.length?', 퇴사 <strong style="color:var(--rd)">'+left.length+'명</strong>('+left.slice(0,5).map(n=>pm[n].nm).join(', ')+(left.length>5?' 외':'')+')':', 퇴사 없음'}${moved.length?', 법인이동 <strong style="color:var(--pp)">'+moved.length+'명</strong>('+moved.map(n=>cm[n].nm+'→'+cm[n].co).join(', ')+')':''}이 발생하였습니다.
+        내부 비중은 <strong style="color:var(--tx)">${(d.int_pay/d.pay*100).toFixed(1)}%</strong>이며, 1인 평균 내부 급여는 ${M(intAvg)}입니다.
+      </div>
+    </div>
+
+    <!-- 3. 비용 구조 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:500;color:var(--bl);letter-spacing:.08em;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:5px;">3. 비용 구조 분석</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div class="kc"><div class="kl">한백계열 (비용 직접부담)</div><div class="kv up">${M(hbPay)}</div><div class="kd">${hbPct}%</div></div>
+        <div class="kc"><div class="kl">한백계열외 (비용 미부담)</div><div class="kv wr">${M(otPay)}</div><div class="kd">${(100-parseFloat(hbPct)).toFixed(1)}%</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--mt);line-height:1.8;padding:10px;background:var(--s2);border-radius:6px;">
+        한백계열 비용은 전체의 <strong style="color:var(--tx)">${hbPct}%</strong>(${M(hbPay)})를 차지하고 있습니다.
+        ${corpChanges.length>=3?'법인별 변동 주요 사항: '+corpChanges.slice(0,3).map(c=>'<strong>'+c.name+'</strong> '+(c.diff>0?'+':'')+M(c.diff)).join(', ')+'입니다.':''}
+      </div>
+    </div>
+
+    <!-- 4. 급여 증감 주요 인원 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:500;color:var(--bl);letter-spacing:.08em;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:5px;">4. 급여 증감 주요 인원 (TOP 5)</div>
+      ${diffs.length?`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><div style="font-size:10px;color:var(--tl);margin-bottom:6px;">▲ 증가</div>
+          ${diffs.filter(x=>x.df>0).slice(0,5).map(x=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--bd);font-size:12px;"><span>${x.nm} <span style="color:var(--mt);font-size:10px;">${x.co}</span></span><span class="mn-f up">+${C(Math.round(x.df))}</span></div>`).join('')}
+        </div>
+        <div><div style="font-size:10px;color:var(--rd);margin-bottom:6px;">▼ 감소</div>
+          ${diffs.filter(x=>x.df<0).slice(0,5).map(x=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:.5px solid var(--bd);font-size:12px;"><span>${x.nm} <span style="color:var(--mt);font-size:10px;">${x.co}</span></span><span class="mn-f dn">${C(Math.round(x.df))}</span></div>`).join('')}
+        </div>
+      </div>`:'<div style="color:var(--hn);font-size:12px;text-align:center;padding:12px;">전월 데이터 없음</div>'}
+    </div>
+
+    <!-- 5. 인사이트 & 점검사항 -->
+    <div>
+      <div style="font-size:11px;font-weight:500;color:var(--bl);letter-spacing:.08em;margin-bottom:10px;border-bottom:1px solid var(--bd);padding-bottom:5px;">5. 인사이트 및 점검사항</div>
+      <div style="font-size:12px;color:var(--mt);line-height:1.9;padding:10px;background:var(--s2);border-radius:6px;">
+        ${generateInsights(d,p,y,joined,left,moved,diffs,hbPay,otPay,corpChanges)}
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div style="margin-top:20px;padding-top:12px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;font-size:10px;color:var(--hn);">
+      <span>한백 계열사 급여관리 시스템 · 자동 생성</span>
+      <span>생성일: ${new Date().toLocaleDateString('ko-KR')}</span>
+    </div>
+  </div>`;
+
+  E('rpContent').innerHTML=rpt;
+}
+
+function generateInsights(d,p,y,joined,left,moved,diffs,hbPay,otPay,corpChanges){
+  const items=[];
+  // 인원 변동 인사이트
+  if(joined.length>left.length) items.push('• <strong>인원 순증가</strong>: 신규입사('+joined.length+'명)가 퇴사('+left.length+'명)를 초과하여 인력 확대 추세입니다.');
+  else if(left.length>joined.length) items.push('• <strong>인원 순감소</strong>: 퇴사('+left.length+'명)가 입사('+joined.length+'명)를 초과하였습니다. 충원 계획 검토가 필요합니다.');
+  // 인건비 추세
+  if(p&&d.pay>p.pay*1.03) items.push('• <strong>인건비 상승</strong>: 전월 대비 '+(d.pay/p.pay*100-100).toFixed(1)+'% 증가하였습니다. 수당 항목별 점검이 권장됩니다.');
+  if(y&&d.pay>y.pay*1.1) items.push('• <strong>전년比 10%↑ 초과</strong>: 전년 동월 대비 '+(d.pay/y.pay*100-100).toFixed(1)+'% 증가. 연간 인건비 예산 대비 진행률 확인이 필요합니다.');
+  // 외부인력 비중
+  const extPct=d.ext_pay/d.pay*100;
+  if(extPct>15) items.push('• <strong>외부인력 비중 '+extPct.toFixed(1)+'%</strong>: 외부인력 인건비 비중이 높은 편입니다. 내부화 전환 검토 대상이 있는지 확인이 필요합니다.');
+  // 법인이동
+  if(moved.length>0) items.push('• <strong>법인이동 '+moved.length+'건</strong>: 4대보험 취득/상실 신고 및 급여 일할계산 정확성 확인이 필요합니다.');
+  // 대규모 증감
+  const bigChanges=diffs.filter(x=>Math.abs(x.df)>1000000);
+  if(bigChanges.length>0) items.push('• <strong>100만원↑ 변동 '+bigChanges.length+'명</strong>: '+bigChanges.slice(0,3).map(x=>x.nm+'('+x.rs+')').join(', ')+' — 사유 확인 필요.');
+  // 한백계열 비중
+  items.push('• <strong>한백계열 비용 비중</strong>: '+(hbPay/d.pay*100).toFixed(1)+'% ('+M(hbPay)+') — 직접부담 인건비 모니터링 지속.');
+  if(items.length===0) items.push('• 특이사항 없음. 정상 범위 내 급여 집행.');
+  return items.join('<br>');
+}
+
+function printReport(){
+  const content=E('rpContent')?.innerHTML;
+  if(!content) return;
+  const win=window.open('','_blank');
+  win.document.write('<html><head><title>급여보고서</title><style>body{font-family:"Noto Sans KR",sans-serif;padding:20px;background:#fff;color:#1a1a1a;font-size:13px;line-height:1.6;}strong{font-weight:600;}.kv{font-size:18px;font-weight:500;}.up{color:#2EA043;}.dn{color:#d32f2f;}.wr{color:#f0b429;}.mn-f{font-family:monospace;}.kc{background:#f5f5f5;border-radius:6px;padding:10px;}.kl{font-size:9px;color:#888;margin-bottom:4px;}.kd{font-size:10px;color:#888;margin-top:3px;}.kg{display:grid;gap:8px;}.nu{color:#888;}</style></head><body>');
+  win.document.write(content.replace(/var\(--s1\)/g,'#fff').replace(/var\(--s2\)/g,'#f8f8f8').replace(/var\(--bd\)/g,'#e0e0e0').replace(/var\(--tx\)/g,'#1a1a1a').replace(/var\(--mt\)/g,'#666').replace(/var\(--hn\)/g,'#999').replace(/var\(--tl\)/g,'#2EA043').replace(/var\(--rd\)/g,'#d32f2f').replace(/var\(--bl\)/g,'#1565C0').replace(/var\(--pp\)/g,'#7B1FA2').replace(/var\(--gd\)/g,'#F0B429'));
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+
+
+// ════ 프로세스 ════
+function rProc(){
+  const steps=[{n:1,t:'파일 수신',s:'xlsx 업로드 → 구조 검사',c:'var(--bl)'},{n:2,t:'RAW_DATA 업데이트',s:'pkl+Excel 교체 → 오류0건',c:'var(--tl)'},{n:3,t:'인사이동 확인',s:'분리행 감지 → 현민님 보완',c:'var(--gd)'},{n:4,t:'대시보드 생성',s:'9슬라이드 → 정합성 검증',c:'var(--tl)'},{n:5,t:'검토 확정',s:'현민 검토 → 수정 → 최종',c:'var(--pp)'}];
+  E('procSteps').innerHTML=steps.map(s=>`<div style="display:flex;gap:10px;padding:10px;background:var(--s2);border-radius:6px;"><div style="width:24px;height:24px;border-radius:50%;background:${s.c};opacity:.15;display:flex;align-items:center;justify-content:center;"><span style="font-size:11px;font-weight:500;opacity:1;">${s.n}</span></div><div><div style="font-size:12px;font-weight:500;">${s.t}</div><div style="font-size:10px;color:var(--mt);">${s.s}</div></div></div>`).join('');
+  const cls=[{id:'c1',l:'확정파일 업로드'},{id:'c2',l:'RAW_DATA 업데이트'},{id:'c3',l:'수식 오류 0건'},{id:'c4',l:'인사이동 확인'},{id:'c5',l:'대시보드 생성'},{id:'c6',l:'정합성 검증'},{id:'c7',l:'오류 0건 확인'}];
+  const saved=JSON.parse(localStorage.getItem('hb_cl')||'{}');
+  E('procCL').innerHTML=cls.map(c=>`<label style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:5px;cursor:pointer;background:${saved[c.id]?'var(--tl-bg)':'var(--s2)'};margin-bottom:4px;"><input type="checkbox" ${saved[c.id]?'checked':''} onchange="toggleCL('${c.id}',this.checked)" style="accent-color:var(--tl);"><span style="font-size:11px;">${c.l}</span></label>`).join('');
+}
+function toggleCL(id,v){const s=JSON.parse(localStorage.getItem('hb_cl')||'{}');s[id]=v;localStorage.setItem('hb_cl',JSON.stringify(s));}
+function resetCL(){localStorage.removeItem('hb_cl');rProc();noti('초기화됨','ok');}
+
+// ════ INIT ════
+initSel('dY','dM',rDash,true);initSel('mY','mM',rMove);
+initSel('lY','lM',rLabor);initSel('dtY','dtM',rDetail);
+G_KEY=lKey();
+function updateLastUpdate(){
+  const lk=lKey();
+  const el=E('lastUpdate');
+  if(el&&lk) el.textContent='최종 업데이트: '+getYM(lk);
+}
+updateLastUpdate();
+E('tbMeta').textContent=G_KEY+' · '+(AGG[G_KEY]?AGG[G_KEY].total_n+'명 · '+M(AGG[G_KEY].pay):'');
+const gu=GAS_URL||localStorage.getItem('hb_gas');if(gu){E('gasUrl').value=gu;E('gasStatus').innerHTML='<span style="color:var(--tl)">\u2713 \uc5f0\uacb0\ub428'+(GAS_URL?' (\ud30c\uc77c \ub0b4\uc7a5)':'')+'</span>';}
+// Sheets 자동 로드 (URL 설정 시)
+if(gu){gasAutoLoad();}else{rDash();}
+</script></body></html>
